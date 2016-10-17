@@ -10,8 +10,12 @@ std::normal_distribution<>mutator = std::normal_distribution<>(mut_mean, mut_std
 std::uniform_real_distribution<>rates = std::uniform_real_distribution<>(0, 1);
 std::uniform_real_distribution<>rander = std::uniform_real_distribution<>(-8, 8);
 
-std::string prey_name = "Whatever_Prey";
-std::string pred_name = "Whatever_Pred";
+unsigned long milliseconds_since_epoch =
+    std::chrono::system_clock::now().time_since_epoch() / 
+    std::chrono::milliseconds(1);
+
+std::string prey_name = "prey_" + std::to_string(milliseconds_since_epoch) ;
+std::string pred_name = "pred_" + std::to_string(milliseconds_since_epoch) ;
 
 std::fstream output_file_prey = std::fstream(prey_name, std::fstream::out);
 std::fstream output_file_pred = std::fstream(pred_name, std::fstream::out);
