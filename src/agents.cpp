@@ -10,7 +10,7 @@ void agent::update() {
         std::vector<double> inputs = {(input_agent[0])->x, (input_agent[0])->y};
         n.update( (g.c1)->values , (g.c2)->values, inputs);
         //move based on nn outputs
-        move_x_y(n.output_values[0] ,  n.output_values[1]);
+        move_x_y(n.output_values[0] * pred_capture ,  n.output_values[1] * pred_capture);
     }
 }
 
