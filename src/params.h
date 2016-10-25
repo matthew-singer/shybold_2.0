@@ -9,6 +9,7 @@
     const int input  = 2; //bias node and angle facing
     const int input_agents = 1; // number of agents to input into the NN
 
+
     const int output = 3;
     const int hiddenLayerSize = 0;
     const int hiddenLayers = 0;
@@ -16,14 +17,19 @@
     const int geneNN = ((input+input_agents*2)*output)*((hiddenLayerSize+1)*(hiddenLayers+1));
     const int geneCount = geneNN + input;
     
-    const int generations = 1;
+    const int generations = 100;
     const int timeTicks = 1000;
 
     const int replicates = 1;
-    const int predator_pop_count = 10;
-    const int prey_pop_count = 10;
+    const int predator_pop_count = 100;
+    const int prey_pop_count = 1000;
 
     const double pred_capture = 8; 
+    const double sensing_range_pred = 500;
+    const double sensing_range_prey = 500;
+
+    const double sizeX = 1000;
+    const double sizeY = 1000;
 
     const double mut_mean = 0;
     const double mut_stddev = 1;

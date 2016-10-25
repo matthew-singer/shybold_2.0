@@ -9,17 +9,19 @@ void population::update() {
             time = timeTicks;
             while (--time) {
                 //N * N loop over pred and prey to update them
-                for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
-                    for (int pred_i = reps * predator_pop_count; pred_i < (predator_pop_count * (reps + 1)) ; ++pred_i) {
+                for (int pred_i = reps * predator_pop_count; pred_i < (predator_pop_count * (reps + 1)) ; ++pred_i) {
+                    for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
                         if (prey_pop[prey_i]->alive) {
-                            prey_pop[prey_i]->getNearestAgent(preds_pop[pred_i]);
-                            preds_pop[pred_i]->getNearestAgent(prey_pop[prey_i]);
-                            preds_pop[pred_i]->update();
-                            preds_pop[pred_i]->consume(timeTicks - time);
+                            //prey_pop[prey_i]->getNearestAgent(preds_pop[pred_i], pred_i);
+                            preds_pop[pred_i]->getNearestAgent(prey_pop[prey_i], prey_i);
+                            preds_pop[pred_i]->getNearestAgent(prey_pop[pred_i], prey_i);
                         }
-
                     }
+
+                    preds_pop[pred_i]->update();
+                    preds_pop[pred_i]->consume(timeTicks - time);
                 }
+                
                 //N loop over prey to update them 
                 for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
                     if (prey_pop[prey_i]->alive) {
