@@ -9,8 +9,8 @@
 class agent  {
 public:
 
-	genome g;
-    network n;
+    std::shared_ptr<genome> g;
+    std::shared_ptr<network> n;
 
 	bool alive;
     bool prey;
@@ -25,34 +25,32 @@ public:
     }
 
 	unsigned long long int survivedTime;
-    //std::vector<std::shared_ptr<agent> > input_agent;
-    std::array<std::shared_ptr<agent>, input_agents> input_agent;
+    std::vector<std::shared_ptr<agent> > input_agent;
+    //std::array<std::shared_ptr<agent>, input_agents> input_agent;
     std::vector<int> index_oppisite;
 
     int lastTime;
 
     agent() {
+        g.reset(new genome());
+        n.reset(new network());
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
         lastTime = timeTicks;
-        input_agent[0] = nullptr; 
         fitness = 0;
         alive = true;
     };
     
-    agent(std::shared_ptr<chrome> p1, std::shared_ptr<chrome> p2) {
+    agent(std::shared_ptr<chrome> &p1, std::shared_ptr<chrome> &p2) {
+        g.reset(new genome(p1, p2));
+        n.reset(new network());
         setPoints(rander(mutate) * sizeX, rander(mutate) * sizeY); //set to random
         lastTime = timeTicks;
         fitness = 0;
         alive = true;
     };
     
-    void getNearestAgent(const std::shared_ptr<agent> &a, int index); 
-
-    template <std::size_t SIZE>
-    void getNearestAgent(std::array < std::shared_ptr< agent>, SIZE > a, int index);
-
-    template <std::size_t SIZE>
-    void consume(int time, std::array< std::shared_ptr <agent>, SIZE> a);
+    void getNearestAgentPrey(const std::shared_ptr<agent> &a); 
+    void getNearestAgentPred(const std::shared_ptr<agent> &a); 
 
     void update(); 
     void move_x_y(double dx, double dy);
@@ -68,7 +66,7 @@ public:
         return lastTime / prey_fitness;
     }
 
-    std::shared_ptr<chrome> getGamete() { return g.mutate_x_over(); }
+    std::shared_ptr<chrome> getGamete() { return g->mutate_x_over(); }
     std::shared_ptr<agent> set_input(std::vector < std::shared_ptr<agent> >);  
     void output_data(std::fstream &o, bool prey, int gen, int index) ;
 

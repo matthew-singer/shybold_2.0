@@ -29,14 +29,12 @@ public:
     }
     void update();
     template<std::size_t SIZE>
-    void reproduce(std::vector< std::shared_ptr<chrome> > gametes, std::array< std::shared_ptr<agent>, SIZE>, int pop_size );
+    void reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std::array< std::shared_ptr<agent>, SIZE> &pop, int pop_size );
 
     void nextGen(std::vector<chrome> pred, std::vector<chrome> prey) {
         ++gen;
     }
 
-    template<std::size_t SIZE>
-    void reproduce(std::vector< std::shared_ptr<chrome> > gametes, std::array< std::shared_ptr<agent>, SIZE > pop, int pop_size, int reps);
 
 };
 

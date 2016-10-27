@@ -21,15 +21,15 @@
     const int timeTicks = 1000;
 
     const int replicates = 1;
-    const int predator_pop_count = 100;
-    const int prey_pop_count = 1000;
+    const int predator_pop_count = 1;
+    const int prey_pop_count = 1;
 
     const double pred_capture = 8; 
-    const double sensing_range_pred = 500;
+    const double sensing_range_pred = 50;
     const double sensing_range_prey = 500;
 
-    const double sizeX = 1000;
-    const double sizeY = 1000;
+    const double sizeX = 10000;
+    const double sizeY = 10000;
 
     const double mut_mean = 0;
     const double mut_stddev = 1;

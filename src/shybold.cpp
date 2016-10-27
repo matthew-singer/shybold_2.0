@@ -2,6 +2,7 @@
 #include <memory>
 #include "population.h"
 #include <fstream>
+#include <chrono>
 
 std::random_device(rd);
 std::mt19937 mutate = std::mt19937(rd());
@@ -16,13 +17,21 @@ unsigned long milliseconds_since_epoch =
 std::string prey_name = "prey_" + std::to_string(milliseconds_since_epoch) ;
 std::string pred_name = "pred_" + std::to_string(milliseconds_since_epoch) ;
 
-std::fstream output_file_prey = std::fstream(prey_name, std::fstream::out);
-std::fstream output_file_pred = std::fstream(pred_name, std::fstream::out);
+std::fstream output_file_prey;
+std::fstream output_file_pred;
 
 void setup_file(std::fstream &o, std::string oppFile);
 
-int main() {
+int main(int argc, char **argv) {
+    if (argc > 1) {
+        std::string ending(argv[1]);
+        prey_name += "_" + ending;
+        pred_name += "_" + ending;
+    }
     
+    output_file_prey.open(prey_name, std::fstream::out);
+    output_file_pred.open(pred_name, std::fstream::out);
+
     setup_file(output_file_prey, pred_name);
     setup_file(output_file_pred, prey_name);
 
