@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 
-    const int input  = 2; //bias node and angle facing
+    const int input  = 2; //bias node and angle facing change something
     const int input_agents = 1; // number of agents to input into the NN
 
 
