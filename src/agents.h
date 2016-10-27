@@ -16,7 +16,7 @@ public:
     bool prey;
     double fitness;
 
-
+    //can be moved to points.h again
     double x, y;
     void setPoints(double x_, double y_) { x = x_; y = y_; }
 
@@ -26,8 +26,6 @@ public:
 
 	unsigned long long int survivedTime;
     std::vector<std::shared_ptr<agent> > input_agent;
-    //std::array<std::shared_ptr<agent>, input_agents> input_agent;
-    std::vector<int> index_oppisite;
 
     int lastTime;
 

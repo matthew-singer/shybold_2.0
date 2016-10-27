@@ -20,9 +20,9 @@
     const int generations = 100;
     const int timeTicks = 1000;
 
-    const int replicates = 1;
+    const int replicates = 100; //number of tanks
     const int predator_pop_count = 1;
-    const int prey_pop_count = 1;
+    const int prey_pop_count = 1; //turn off prey nn
 
     const double pred_capture = 8; 
     const double sensing_range_pred = 50;

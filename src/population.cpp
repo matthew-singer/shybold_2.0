@@ -9,6 +9,8 @@ void population::update() {
             time = timeTicks;
             while (--time) {
                 //N * N loop over pred and prey to update them
+                //k-d boost teree (maybe?)
+                //debug reps
                 for (int pred_i = reps * predator_pop_count; pred_i < (predator_pop_count * (reps + 1)) ; ++pred_i) {
                     for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
                         if (prey_pop[prey_i]->alive) {

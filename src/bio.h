@@ -11,6 +11,7 @@ class chrome {
 public:
     double metabolic;
     double radius;
+    //other genes here
     int id;
 
     std::array<double, geneNN> values;

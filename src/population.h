@@ -31,7 +31,7 @@ public:
     template<std::size_t SIZE>
     void reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std::array< std::shared_ptr<agent>, SIZE> &pop, int pop_size );
 
-    void nextGen(std::vector<chrome> pred, std::vector<chrome> prey) {
+    void nextGen(std::vector<chrome> pred, std::vector<chrome> prey) { //do i use this funciton?
         ++gen;
     }
 

@@ -8,7 +8,7 @@ std::random_device(rd);
 std::mt19937 mutate = std::mt19937(rd());
 std::normal_distribution<>mutator = std::normal_distribution<>(mut_mean, mut_stddev);
 std::uniform_real_distribution<>rates = std::uniform_real_distribution<>(0, 1);
-std::uniform_real_distribution<>rander = std::uniform_real_distribution<>(-8, 8);
+std::uniform_real_distribution<>rander = std::uniform_real_distribution<>(-8, 8); //pred capture
 
 unsigned long milliseconds_since_epoch =
     std::chrono::system_clock::now().time_since_epoch() / 

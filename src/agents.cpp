@@ -6,15 +6,17 @@
 
 void agent::update() {
     std::vector<double> inputs;
-    if (input_agent.size() != 0) {
+    if (input_agent.size() != 0) { //change this (loop througth input_agents and push_back onto inputs
         inputs = {( 10*((input_agent[0])->x - x))/sensing_range_pred    , (10*((input_agent[0])->y - y))/sensing_range_pred, 1};
     } else {
+        //make appropariate number of inputs
         inputs = { 0.0, 0.0, 1.0};
     }
+    //you hand it chrome 1 values and chrome 2 values from genome
     n->update( (g->c1)->values, (g->c2)->values, inputs);
+    //move based on ouptputs
     move_x_y(n->output_values[0] * pred_capture,  n->output_values[1] * pred_capture);
 }
-
 
 //Need to change to get sorted vector of agents inputs
 void agent::getNearestAgentPrey(const std::shared_ptr<agent> &a) {
@@ -23,6 +25,7 @@ void agent::getNearestAgentPrey(const std::shared_ptr<agent> &a) {
             input_agent.push_back(a);
         }
     } else if (this->distance(a) < this->distance(input_agent[0]) || !input_agent[0]->alive) {
+        //change it here, sort the input_agents and push them appropriately on
         if (this->distance(a) < sensing_range_prey) {
             input_agent[0] = a;
         }
@@ -35,12 +38,14 @@ void agent::getNearestAgentPred(const std::shared_ptr<agent> &a) {
             input_agent.push_back(a);
         }
     } else if (this->distance(a) < this->distance(input_agent[0]) || !input_agent[0]->alive) {
+        //same thing here
         if (this->distance(a) < sensing_range_pred) {
             input_agent[0] = a;
         }
     }
 }
 
+//figure out what you want to do here
 void agent::consume(int time) {
     if (input_agent.size() != 0) {
         if (this->distance(input_agent[0]) < pred_capture && input_agent[0]->alive) {
