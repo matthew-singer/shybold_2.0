@@ -71,7 +71,10 @@ public:
     std::shared_ptr<chrome> mutate_x_over() {
         return c1->xover_mut(c2); 
     }
-
+    
+    double getWeight(size_t i) {
+        return ((c1->values)[i] + (c2->values)[i])/2.0;
+    }
 };
 
 #endif

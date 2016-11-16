@@ -9,8 +9,7 @@ void population::update() {
             time = timeTicks;
             while (--time) {
                 //N * N loop over pred and prey to update them
-                //k-d boost teree (maybe?)
-                //debug reps
+
                 for (int pred_i = reps * predator_pop_count; pred_i < (predator_pop_count * (reps + 1)) ; ++pred_i) {
                     for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
                         if (prey_pop[prey_i]->alive) {
@@ -19,16 +18,16 @@ void population::update() {
                         }
                     }
 
-                    preds_pop[pred_i]->update();
+                    preds_pop[pred_i]->updatePred();
                     preds_pop[pred_i]->consume(timeTicks - time);
                 }
-                
                 //N loop over prey to update them 
                 for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
                     if (prey_pop[prey_i]->alive) {
-                        prey_pop[prey_i]->update();
+                        prey_pop[prey_i]->updatePrey();
                     }
                 }
+                
 
             } //end of time
         } //end of replicates
@@ -50,11 +49,13 @@ void population::update() {
         {
             std::vector< std::shared_ptr<chrome> > prey_gametes;
             for (int prey_i = 0; prey_i < prey_pop_count * replicates ; ++prey_i) {
-                int val = prey_pop[prey_i]->calcFitnessPrey();
-                for (int i = 0; i < val; ++i) {
-                    prey_gametes.push_back(prey_pop[prey_i]->getGamete());
+                if (prey_pop[prey_i]->alive) {
+                    int val = prey_pop[prey_i]->calcFitnessPrey();
+                    for (int i = 0; i < val; ++i) {
+                        prey_gametes.push_back(prey_pop[prey_i]->getGamete());
+                    }
+                    prey_pop[prey_i]->output_data(output_file_prey, true, i, prey_i);
                 }
-                prey_pop[prey_i]->output_data(output_file_prey, true, i, prey_i);
             }
             reproduce(prey_gametes, prey_pop, prey_pop_count);
         } //used to scope and free prey gametes after usage

@@ -10,15 +10,15 @@
     const int input_agents = 1; // number of agents to input into the NN
 
 
-    const int output = 3;
+    const int output = 4;
     const int hiddenLayerSize = 0;
     const int hiddenLayers = 0;
 
     const int geneNN = ((input+input_agents*2)*output)*((hiddenLayerSize+1)*(hiddenLayers+1));
     const int geneCount = geneNN + input;
     
-    const int generations = 1000;
-    const int timeTicks = 5000;
+    const int generations = 500;
+    const int timeTicks = 1000;
 
     const int replicates = 1; //number of tanks
     const int predator_pop_count = 100;
@@ -26,10 +26,10 @@
 
     const double pred_capture = 8; 
     const double sensing_range_pred = 250;
-    const double sensing_range_prey = 250;
+    const double sensing_range_prey = 500000000;
 
-    const double sizeX = 5000;
-    const double sizeY = 5000;
+    const double sizeX = 10000;
+    const double sizeY = 10000;
 
     const double mut_mean = 0;
     const double mut_stddev = 1;

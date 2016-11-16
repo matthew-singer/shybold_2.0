@@ -12,7 +12,7 @@ public:
     std::shared_ptr<genome> g;
     std::shared_ptr<network> n;
 
-	bool alive;
+    bool alive;
     bool prey;
     double fitness;
 
@@ -21,10 +21,10 @@ public:
     void setPoints(double x_, double y_) { x = x_; y = y_; }
 
     double distance(const std::shared_ptr<agent> &p) {
-        return pow(p->x - x, 2) + pow(p->y - y, 2);
+        return pow(pow(p->x - x, 2) + pow(p->y - y, 2), .5);
     }
 
-	unsigned long long int survivedTime;
+    unsigned long long int survivedTime;
     std::vector<std::shared_ptr<agent> > input_agent;
 
     int lastTime;
@@ -50,7 +50,8 @@ public:
     void getNearestAgentPrey(const std::shared_ptr<agent> &a); 
     void getNearestAgentPred(const std::shared_ptr<agent> &a); 
 
-    void update(); 
+    void updatePred(); 
+    void updatePrey(); 
     void move_x_y(double dx, double dy);
     void move_theta_mag(double theta, double mag);
 
