@@ -43,19 +43,15 @@ void population::update() {
             }
             reproduce(pred_gametes, preds_pop, predator_pop_count);
         } //used to score and free pred gametes after
-
-
         /*Prey reproduce*/
         {
             std::vector< std::shared_ptr<chrome> > prey_gametes;
             for (int prey_i = 0; prey_i < prey_pop_count * replicates ; ++prey_i) {
-                if (prey_pop[prey_i]->alive) {
-                    int val = prey_pop[prey_i]->calcFitnessPrey();
-                    for (int i = 0; i < val; ++i) {
-                        prey_gametes.push_back(prey_pop[prey_i]->getGamete());
-                    }
-                    prey_pop[prey_i]->output_data(output_file_prey, true, i, prey_i);
+                int val = prey_pop[prey_i]->calcFitnessPrey();
+                for (int i = 0; i < val; ++i) {
+                    prey_gametes.push_back(prey_pop[prey_i]->getGamete());
                 }
+                prey_pop[prey_i]->output_data(output_file_prey, true, i, prey_i);
             }
             reproduce(prey_gametes, prey_pop, prey_pop_count);
         } //used to scope and free prey gametes after usage
@@ -87,9 +83,9 @@ void population::reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std:
             gametes.pop_back();
             std::shared_ptr<chrome> p2 = gametes.back();
             gametes.pop_back();
-            pop[i] = std::make_shared<agent>(p1, p2);
+            pop[i] = std::move(std::make_shared<agent>(p1, p2));
         } else {
-            pop[i] = std::make_shared<agent>();
+            pop[i] = std::move(std::make_shared<agent>());
         }
     }
 

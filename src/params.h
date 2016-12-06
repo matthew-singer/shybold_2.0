@@ -26,7 +26,7 @@
 
     const double pred_capture = 8; 
     const double sensing_range_pred = 250;
-    const double sensing_range_prey = 500000000;
+    const double sensing_range_prey = 500;
 
     const double sizeX = 10000;
     const double sizeY = 10000;
