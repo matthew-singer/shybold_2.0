@@ -19,12 +19,10 @@ public:
         time = timeTicks;
         gen = 0;
         for (int i = 0; i < predator_pop_count * replicates ; ++i) {
-            std::shared_ptr<agent> p(new agent());
-            preds_pop[i] = p;
+            preds_pop[i] = std::make_shared<agent>();
         }
         for (int i = 0; i < prey_pop_count * replicates ; ++i) {
-            std::shared_ptr<agent> p(new agent());
-            prey_pop[i] = p;
+            prey_pop[i] = std::make_shared<agent>();
         }
     }
     void update();

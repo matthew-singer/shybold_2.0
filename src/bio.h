@@ -61,11 +61,14 @@ public:
 	std::shared_ptr<chrome> c1;
 	std::shared_ptr<chrome> c2;
     	
-    genome(std::shared_ptr<chrome> c1_, std::shared_ptr<chrome> c2_) : c1(c1_), c2(c2_) { }
+    genome(std::shared_ptr<chrome> c1_, std::shared_ptr<chrome> c2_) { 
+        c1 = std::make_shared<chrome>(c1_);
+        c2 = std::make_shared<chrome>(c2_);
+    }
 
 	genome() { 
-        c1.reset(new chrome());
-        c2.reset(new chrome());
+        c1 = std::make_shared<chrome>();
+        c2 = std::make_shared<chrome>();
     }
 
     std::shared_ptr<chrome> mutate_x_over() {

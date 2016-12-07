@@ -21,6 +21,7 @@ public:
     void setPoints(double x_, double y_) { x = x_; y = y_; }
 
     double distance(const std::shared_ptr<agent> &p) {
+        
         return pow(pow(p->x - x, 2) + pow(p->y - y, 2), .5);
     }
 
@@ -30,8 +31,8 @@ public:
     int lastTime;
 
     agent() {
-        g.reset(new genome());
-        n.reset(new network());
+        g = std::make_shared<genome>();
+        n = std::make_shared<network>();
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
         lastTime = timeTicks;
         fitness = 0;
@@ -39,8 +40,8 @@ public:
     };
     
     agent(std::shared_ptr<chrome> &p1, std::shared_ptr<chrome> &p2) {
-        g.reset(new genome(p1, p2));
-        n.reset(new network());
+        g = std::make_shared<genome>(p1, p2);
+        n = std::make_shared<network>();
         setPoints(rander(mutate) * sizeX, rander(mutate) * sizeY); //set to random
         lastTime = timeTicks;
         fitness = 0;
@@ -68,7 +69,15 @@ public:
     std::shared_ptr<chrome> getGamete() { return g->mutate_x_over(); }
     std::shared_ptr<agent> set_input(std::vector < std::shared_ptr<agent> >);  
     void output_data(std::fstream &o, bool prey, int gen, int index) ;
-
+    void reset() { 
+        if (input_agent.size() < 1) { 
+            input_agent.push_back(nullptr); 
+        } else {
+            for (auto &i : input_agent) {
+                i = nullptr;
+            }
+        }
+    };
 };
 
 

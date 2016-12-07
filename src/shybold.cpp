@@ -35,8 +35,7 @@ int main(int argc, char **argv) {
     setup_file(output_file_prey, pred_name);
     setup_file(output_file_pred, prey_name);
 
-    std::unique_ptr<population> pop;
-    pop.reset(new population());
+    std::shared_ptr<population> pop = std::make_shared<population>();
     pop->update();
 
 

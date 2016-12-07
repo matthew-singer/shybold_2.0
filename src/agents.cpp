@@ -6,7 +6,7 @@
 
 void agent::updatePrey() {
     std::vector<double> inputs;
-    if (input_agent.size() != 0) { //change this (loop througth input_agents and push_back onto inputs
+    if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
         inputs = {( 10*((input_agent[0])->x - x))/sensing_range_prey    , (10*((input_agent[0])->y - y))/sensing_range_prey, 0.0, 1.0};
     } else {
         //make appropariate number of inputs
@@ -20,7 +20,7 @@ void agent::updatePrey() {
 
 void agent::updatePred() {
     std::vector<double> inputs;
-    if (input_agent.size() != 0) { //change this (loop througth input_agents and push_back onto inputs
+    if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
         inputs = {( 10*((input_agent[0])->x - x))/sensing_range_pred    , (10*((input_agent[0])->y - y))/sensing_range_pred, 0.0, 1.0};
     } else {
         //make appropariate number of inputs
@@ -38,7 +38,7 @@ void agent::getNearestAgentPrey(const std::shared_ptr<agent> &a) {
         if (this->distance(a) < sensing_range_prey) {
             input_agent.push_back(a);
         }
-    } else if (this->distance(a) < this->distance(input_agent[0])) {
+    } else if (input_agent[0] && this->distance(a) < this->distance(input_agent[0])) {
         //change it here, sort the input_agents and push them appropriately on
         if (this->distance(a) < sensing_range_prey) {
             input_agent[0] = a;
@@ -51,7 +51,7 @@ void agent::getNearestAgentPred(const std::shared_ptr<agent> &a) {
         if (this->distance(a) < sensing_range_pred) {
             input_agent.push_back(a);
         }
-    } else if (this->distance(a) < this->distance(input_agent[0]) || !input_agent[0]->alive) {
+    } else if (input_agent[0] && (this->distance(a) < this->distance(input_agent[0]) || !input_agent[0]->alive) ) {
         //same thing here
         if (this->distance(a) < sensing_range_pred) {
             input_agent[0] = a;
@@ -61,7 +61,7 @@ void agent::getNearestAgentPred(const std::shared_ptr<agent> &a) {
 
 //figure out what you want to do here
 void agent::consume(int time) {
-    if (input_agent.size() != 0) {
+    if (input_agent.size() != 0 && input_agent[0]) {
         if (this->distance(input_agent[0]) < pred_capture && input_agent[0]->alive) {
             input_agent[0]->alive = false;
             input_agent[0]->lastTime = time;

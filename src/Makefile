@@ -1,6 +1,7 @@
-CC=/opt/modules/devel/gcc/4.9.1/bin/g++
+CC=g++
 CFLAGS=-std=c++11 -O3
-
+DEBUG=-std=c++11 -g
 all:
 	$(CC) *.cpp $(CFLAGS)
-	
+debug:
+	$(CC) *.cpp $(DEBUG)
