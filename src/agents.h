@@ -42,7 +42,7 @@ public:
     agent(std::shared_ptr<chrome> &p1, std::shared_ptr<chrome> &p2) {
         g = std::make_shared<genome>(p1, p2);
         n = std::make_shared<network>();
-        setPoints(rander(mutate) * sizeX, rander(mutate) * sizeY); //set to random
+        setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
         lastTime = timeTicks;
         fitness = 0;
         alive = true;
