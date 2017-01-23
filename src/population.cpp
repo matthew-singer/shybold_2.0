@@ -42,6 +42,7 @@ void population::update() {
                 for (int i = 0; i < val; ++i) {
                     pred_gametes.push_back(preds_pop[pred_i]->getGamete());
                 }
+                std::cout << (preds_pop[pred_i]->g)->getRadius() << " Radius\n";
                 preds_pop[pred_i]->output_data(output_file_pred, false, i, pred_i);
             }
             reproduce(pred_gametes, preds_pop, predator_pop_count);
@@ -65,23 +66,20 @@ void population::update() {
 
 template<std::size_t SIZE>
 void population::reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std::array< std::shared_ptr<agent>, SIZE > &pop, int pop_size) {
-     /*   
     //if it is too small just totally replace it
-    if (gametes.size() == 0) {
+    /*if (gametes.size() == 0) {
         for (int i = 0; i < pop_size * 2 + 2; ++i) {
             gametes.push_back(std::shared_ptr<chrome>());
         }
     }
-
     while ( gametes.size() < 2 * pop_size * replicates ) {
         std::random_shuffle(gametes.begin(), gametes.end());
         gametes.insert(gametes.end(), gametes.begin(), gametes.begin() + gametes.size());
-    }
-    */
-    std::random_shuffle(gametes.begin(), gametes.end());
+    }*/
 
+    std::random_shuffle(gametes.begin(), gametes.end());
     for (size_t i = 0; i < pop_size * replicates; ++i) {
-        if (gametes.size() > 1) {
+        if (gametes.size() > 2) {
             std::shared_ptr<chrome> p1 = gametes.back();
             gametes.pop_back();
             std::shared_ptr<chrome> p2 = gametes.back();
@@ -91,6 +89,5 @@ void population::reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std:
             pop[i] = std::move(std::make_shared<agent>());
         }
     }
-
 }
 

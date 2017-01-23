@@ -6,17 +6,20 @@
 #include <iostream>
 #include <fstream>
 
-    const int input  = 2; //bias node and angle facing
+    const int input  = 4; //bias node and angle facing
     const int input_agents = 1; // number of agents to input into the NN
 
 
-    const int output = 4;
+    const int output = 3;
     const int hiddenLayerSize = 0;
     const int hiddenLayers = 0;
-
+    
     const int geneNN = ((input+input_agents*2)*output)*((hiddenLayerSize+1)*(hiddenLayers+1));
+    //const int geneNN = 16;
     const int geneCount = geneNN + input;
     
+    const double area = 5000;
+
     const int generations = 1000;
     const int timeTicks = 1000;
 
@@ -28,8 +31,8 @@
     const double sensing_range_pred = 100;
     const double sensing_range_prey = 500;
 
-    const double sizeX = 5000;
-    const double sizeY = 5000;
+    const double sizeX = 20000;
+    const double sizeY = 20000;
 
     const double mut_mean = 0;
     const double mut_stddev = 1;
@@ -39,7 +42,7 @@
 
     const double pred_fitness = 2.0;
 
-    const double prey_fitness = 50.0;
+    const double prey_fitness = 100.0;
 
     extern std::fstream output_file_prey;
     extern std::fstream output_file_pred;

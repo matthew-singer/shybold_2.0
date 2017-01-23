@@ -68,8 +68,10 @@ void setup_file(std::fstream &o, std::string oppFile) {
     o << "Gen" << '\t';
     o << "Index" << '\t';
     o << "Fitness" << '\t';
-    for (int i = 0 ; i < geneCount; ++i) {
+    for (int i = 0 ; i < geneNN ; ++i) {
         o << "Gene" << i << '\t';
     }
+    o << "Metabolic" << '\t';
+    o << "Radius" << '\t';
     o << "Gametes" << '\n';
 }
