@@ -32,10 +32,6 @@ public:
     }
     
     bool between_agent(const std::shared_ptr<agent> &p) {
-        angle_facing = std::fmod(angle_facing, 2 * PI);
-        if (angle_facing < 0) {
-            angle_facing += 2 * PI;
-        }
        
         if (std::abs(angle_facing - atan2(p->y - y, p->x - x)) < diff_angle) {
             return true;

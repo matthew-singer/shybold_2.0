@@ -4,6 +4,8 @@
 #include <cmath>
 #include "agents.h"
 
+#define PI 3.14159
+
 void agent::updatePrey() {
     std::vector<double> inputs;
     if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
@@ -99,9 +101,16 @@ void agent::move_x_y(double dx, double dy) {
 }
 
 void agent::move_mag_theta(double mag, double theta, double direction_facing) {
+    /*std::cout << "X " << sin(theta) * mag << '\n';
+    std::cout << "Y " << cos(theta) * mag << '\n';
+    std::cout << "Theta " << theta << '\n';
+    std::cout << "Mag " << mag << '\n';*/
     x = std::max(0.0, std::min(sin(theta) * mag * pred_capture + x, sizeX));
     y = std::max(0.0, std::min(cos(theta) * mag * pred_capture + y, sizeY));
-    angle_facing += direction_facing;
+    angle_facing = std::fmod(angle_facing + direction_facing, 2 * PI);
+    if (angle_facing < 0 ) {
+        angle_facing += 2 * PI;
+    }
 }
 
 void agent::output_data(std::fstream &o, bool prey, int gen, int index) {

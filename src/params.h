@@ -41,9 +41,9 @@
 
     const double xover_rate = .5;
 
-    const double pred_fitness = .20;
+    const double pred_fitness = .50;
 
-    const double prey_fitness = 1000.0;
+    const double prey_fitness = 500.0;
 
     extern std::fstream output_file_prey;
     extern std::fstream output_file_pred;
