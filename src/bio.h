@@ -19,8 +19,8 @@ public:
         for (int i = 0; i < values.size(); ++i) {
             values[i] = (base->values)[i] + get_mutation();
         }
-        radius += (base->radius) + get_mutation();
-        metabolic += (base->metabolic) +  get_mutation();
+        radius = (base->radius) + get_mutation();
+        metabolic = (base->metabolic) +  get_mutation();
     }	
 
     chrome() {
@@ -77,7 +77,7 @@ public:
         return c1->xover_mut(c2); 
     }
     double getRadius() {
-        return ((c1->radius) + (c2->radius))/2.0;
+        return ((c1->radius) + (c2->radius))/2.0 * base_sensing_range;
     } 
     double getWeight(size_t i) {
         return ((c1->values)[i] + (c2->values)[i])/2.0;

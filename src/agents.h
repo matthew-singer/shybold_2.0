@@ -6,6 +6,9 @@
 #include "params.h"
 #include "network.h"
 
+
+#define PI 3.14159
+
 class agent  {
 public:
 
@@ -29,6 +32,11 @@ public:
     }
     
     bool between_agent(const std::shared_ptr<agent> &p) {
+        angle_facing = std::fmod(angle_facing, 2 * PI);
+        if (angle_facing < 0) {
+            angle_facing += 2 * PI;
+        }
+       
         if (std::abs(angle_facing - atan2(p->y - y, p->x - x)) < diff_angle) {
             return true;
         }
@@ -71,7 +79,7 @@ public:
         fitness = 0;
         alive = true;
         angle_facing = rates(mutate) * 2 * 3.14159; //rand angle facing to start
-        diff_angle = (2.0 * area) / (g->getRadius()*g->getRadius());
+        diff_angle = (0.5 * area) / (g->getRadius()*g->getRadius()); //Theta = A/R2 . It is only half the diff though (plus minus that angle)
     };
     
     void getNearestAgentPrey(const std::shared_ptr<agent> &a); 
@@ -99,9 +107,10 @@ public:
         if (input_agent.size() < 1) { 
             input_agent.push_back(nullptr); 
         } else {
-            for (auto &i : input_agent) {
+            input_agent[0] = nullptr;
+            /*for (auto &i : input_agent) {
                 i = nullptr;
-            }
+            }*/
         }
     };
 };

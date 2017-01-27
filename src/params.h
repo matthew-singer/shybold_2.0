@@ -29,20 +29,21 @@
 
     const double pred_capture = 8; 
     const double sensing_range_pred = 100;
-    const double sensing_range_prey = 500;
+    const double sensing_range_prey = 100;
+    const double base_sensing_range = 100;
 
     const double sizeX = 20000;
     const double sizeY = 20000;
 
     const double mut_mean = 0;
-    const double mut_stddev = 1;
+    const double mut_stddev = 1.0;
     const double mut_rate = 1/(double)geneCount;
 
     const double xover_rate = .5;
 
-    const double pred_fitness = 2.0;
+    const double pred_fitness = .20;
 
-    const double prey_fitness = 100.0;
+    const double prey_fitness = 1000.0;
 
     extern std::fstream output_file_prey;
     extern std::fstream output_file_pred;

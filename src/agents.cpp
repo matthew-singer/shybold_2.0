@@ -8,12 +8,12 @@ void agent::updatePrey() {
     std::vector<double> inputs;
     if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
         saw_last = true;
-        inputs = { this->distance(input_agent[0]),  atan2(input_agent[0]->y - y, input_agent[0]->x - x) , saw_last, !saw_last, angle_facing, 1.0 } ;
+        inputs = { this->distance(input_agent[0]),  atan2(input_agent[0]->y - y, input_agent[0]->x - x) , double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
         //inputs = {( 10*((input_agent[0])->x - x))/sensing_range_prey    , (10*((input_agent[0])->y - y))/sensing_range_prey, 0.0, 1.0};
     } else {
         //make appropariate number of inputs
         saw_last = false;
-        inputs = { 0.0, 0.0, saw_last, !saw_last, angle_facing, 1.0 } ;
+        inputs = { 0.0, 0.0, double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
         //inputs = { 0.0, 0.0, 0.0, 1.0};
     }
     //you hand it chrome 1 values and chrome 2 values from genome
@@ -27,13 +27,13 @@ void agent::updatePred() {
     std::vector<double> inputs;
     if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
         saw_last = true;
-        inputs = { this->distance(input_agent[0]),  atan2(input_agent[0]->y - y, input_agent[0]->x - x) , saw_last, !saw_last, angle_facing, 1.0 } ;
+        inputs = { this->distance(input_agent[0]),  atan2(input_agent[0]->y - y, input_agent[0]->x - x) , double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
         //inputs = { atan2(input_agent[0]->y - y, input_agent[0]->x - x) , this->distance(input_agent[0]), saw_last, !saw_last, angle, 1.0 } ;
         //inputs = {( 10*((input_agent[0])->x - x))/sensing_range_pred    , (10*((input_agent[0])->y - y))/sensing_range_pred, 0.0, 1.0};
     } else {
         //make appropariate number of inputs
         saw_last = false;
-        inputs = { 0.0, 0.0, saw_last, !saw_last, angle_facing, 1.0 } ;
+        inputs = { 0.0, 0.0, double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
         //inputs = { 0.0, 0.0, 0.0, 1.0};
     }
     //you hand it chrome 1 values and chrome 2 values from genome
@@ -45,12 +45,9 @@ void agent::updatePred() {
 
 //Need to change to get sorted vector of agents inputs
 void agent::getNearestAgentPrey(const std::shared_ptr<agent> &a) {
-   if (valid_agent(a)) {
-        if (input_agent.size() == 0) {
-            input_agent.push_back(a);
-        } else {
-            input_agent[0] = a;
-        }
+
+   if (a->alive && valid_agent(a)) {
+       input_agent[0] = a;
     } 
     /*
     if (input_agent.size() == 0) {
@@ -67,11 +64,7 @@ void agent::getNearestAgentPrey(const std::shared_ptr<agent> &a) {
 
 void agent::getNearestAgentPred(const std::shared_ptr<agent> &a) {
    if (valid_agent(a)) {
-        if (input_agent.size() == 0) {
-            input_agent.push_back(a);
-        } else {
-            input_agent[0] = a;
-        }
+        input_agent[0] = a;
     }  
    /*if (input_agent.size() == 0) {
         if (this->distance(a) < sensing_range_pred) {
@@ -106,8 +99,8 @@ void agent::move_x_y(double dx, double dy) {
 }
 
 void agent::move_mag_theta(double mag, double theta, double direction_facing) {
-    x = std::max(0.0, std::min(sin(theta) * mag + x, sizeX));
-    y = std::max(0.0, std::min(cos(theta) * mag + y, sizeX));
+    x = std::max(0.0, std::min(sin(theta) * mag * pred_capture + x, sizeX));
+    y = std::max(0.0, std::min(cos(theta) * mag * pred_capture + y, sizeY));
     angle_facing += direction_facing;
 }
 
