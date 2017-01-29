@@ -1,5 +1,8 @@
 #include "population.h"
 #include <algorithm>
+#ifdef OPEN_CV
+    #include <opencv2/opencv.hpp>
+#endif 
 
 void population::update() {
     
@@ -8,6 +11,33 @@ void population::update() {
         for (int reps = 0; reps < replicates; ++reps) {
             time = timeTicks;
             while (--time) {
+               #ifdef OPEN_CV
+                    {
+                        int drawX = 1000; //draws between 1000 1000 and 2000 2000
+                        int drawY = 1000;
+                        int size = 1000;
+                        cv::Mat screen(size, size, CV_8UC3, cv::Scalar(0xff, 0xff, 0xff));
+
+                        for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
+                            if (prey_pop[prey_i]->alive) {
+                                if (prey_pop[prey_i]->x > drawX && prey_pop[prey_i]->x < drawX + size) {
+                                    if (prey_pop[prey_i]->y > drawY && prey_pop[prey_i]->y < drawY + size) {
+                                        cv::circle(screen, cv::Point(prey_pop[prey_i]->x - drawX, prey_pop[prey_i]->y - drawY), 4, cv::Scalar(255, 0, 0));
+                                    }
+                                }
+                            }
+                        }
+                        for (int pred_i = reps * predator_pop_count; pred_i < (predator_pop_count * (reps + 1)) ; ++pred_i) {
+                            if (preds_pop[pred_i]->x > drawX && preds_pop[pred_i]->x < drawX + size) {
+                                if (preds_pop[pred_i]->y > drawY && preds_pop[pred_i]->y < drawY + size) {
+                                    cv::circle(screen, cv::Point(preds_pop[pred_i]->x - drawX, preds_pop[pred_i]->y - drawY), 8, cv::Scalar(0, 0, 255));
+                                }
+                            }
+                        }
+                        cv::imshow(windowName, screen);
+                        cv::waitKey(1);
+                    }
+                #endif       
                 //N * N loop over pred and prey to update them
                 for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
                     prey_pop[prey_i]->reset();
@@ -30,8 +60,6 @@ void population::update() {
                         prey_pop[prey_i]->updatePrey();
                     }
                 }
-                
-
             } //end of time
         } //end of replicates
         /*Pred reproduce*/ 

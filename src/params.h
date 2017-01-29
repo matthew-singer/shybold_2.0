@@ -6,6 +6,10 @@
 #include <iostream>
 #include <fstream>
 
+#ifdef OPEN_CV
+#include<opencv2/opencv.hpp>
+const std::string windowName = "AhYis";
+#endif
     const int input  = 4; //bias node and angle facing
     const int input_agents = 1; // number of agents to input into the NN
 
@@ -32,8 +36,8 @@
     const double sensing_range_prey = 100;
     const double base_sensing_range = 100;
 
-    const double sizeX = 20000;
-    const double sizeY = 20000;
+    const double sizeX = 5000;
+    const double sizeY = 5000;
 
     const double mut_mean = 0;
     const double mut_stddev = 1.0;

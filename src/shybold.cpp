@@ -3,7 +3,9 @@
 #include "population.h"
 #include <fstream>
 #include <chrono>
-
+#ifdef OPEN_CV
+#include <opencv2/opencv.hpp>
+#endif
 std::random_device(rd);
 std::mt19937 mutate = std::mt19937(rd());
 std::normal_distribution<>mutator = std::normal_distribution<>(mut_mean, mut_stddev);
@@ -23,6 +25,10 @@ std::fstream output_file_pred;
 void setup_file(std::fstream &o, std::string oppFile);
 
 int main(int argc, char **argv) {
+#ifdef OPEN_CV
+
+    cv::namedWindow(windowName);
+#endif
     if (argc > 1) {
         std::string ending(argv[1]);
         prey_name += "_" + ending;
