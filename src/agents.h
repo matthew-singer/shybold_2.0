@@ -43,9 +43,15 @@ public:
     }
     
     bool valid_agent(const std::shared_ptr<agent> &p) {
-        if (this->distance(p) < g->getRadius()) {
+        if (p->alive && this->distance(p) < g->getRadius()) {
             if (this->between_agent(p)) {
-                return true; 
+               if (!input_agent[0]) {
+                  return true;
+               } else if (this->distance(p) <= this->distance(input_agent[0])) {
+                    return true;
+               } else { 
+                   return false;
+               }
             }
         }
         return false;

@@ -3,12 +3,18 @@
 #ifdef OPEN_CV
     #include <opencv2/opencv.hpp>
 #endif 
+#include "lookup.h"
+#include <chrono>
 
 void population::update() {
     
     for (int i = 0; i < generations; ++i) { 
+        auto start = std::chrono::high_resolution_clock::now();
         std::cout << "Generation " << i << " of " << generations << '\n';
         for (int reps = 0; reps < replicates; ++reps) {
+            std::shared_ptr<Lookup> lookup_pred = std::make_shared<Lookup>(preds_pop);
+            std::shared_ptr<Lookup> lookup_prey = std::make_shared<Lookup>(prey_pop);
+            
             time = timeTicks;
             while (--time) {
                #ifdef OPEN_CV
@@ -51,13 +57,48 @@ void population::update() {
                             preds_pop[pred_i]->getNearestAgentPred(prey_pop[prey_i]);
                         }
                     }
+                    std::shared_ptr<agent> tmp = lookup_prey->valid_agent(preds_pop[pred_i]);
+
+                   if ((preds_pop[pred_i]->input_agent[0])) {
+                        std::cout << preds_pop[pred_i]->input_agent[0]->x << " ";
+                    } else {
+                        std::cout << "NA" << " ";
+                    }
+
+                    if (tmp) {
+                        std::cout << tmp->x << std::endl;
+                    } else {
+                        std::cout << "NA" << std::endl;
+                    }
+                    if ((preds_pop[pred_i]->input_agent[0])) {
+                        std::cout << preds_pop[pred_i]->input_agent[0]->y << " ";
+                    } else {
+                        std::cout << "NA" << " ";
+                    }
+
+                    if (tmp) {
+                        std::cout << tmp->y << std::endl;
+                    } else {
+                        std::cout << "NA" << std::endl;
+                    }
+ 
+                    int lookupX = lookup_pred->getLocX(preds_pop[pred_i]);
+                    int lookupY = lookup_pred->getLocY(preds_pop[pred_i]);
                     preds_pop[pred_i]->updatePred();
                     preds_pop[pred_i]->consume(timeTicks - time);
+                    if (lookupX != lookup_pred->getLocX(preds_pop[pred_i]) || lookupY != lookup_pred->getLocY(preds_pop[pred_i])) {
+                        lookup_pred->update(preds_pop[pred_i], lookupX, lookupY);
+                    }
                 }
                 //N loop over prey to update them 
                 for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
+                    int lookupX = lookup_prey->getLocX(prey_pop[prey_i]);
+                    int lookupY = lookup_prey->getLocY(prey_pop[prey_i]);
                     if (prey_pop[prey_i]->alive) {
                         prey_pop[prey_i]->updatePrey();
+                        if (lookupX != lookup_prey->getLocX(prey_pop[prey_i]) || lookupY != lookup_prey->getLocY(prey_pop[prey_i])) {
+                            lookup_prey->update(prey_pop[prey_i], lookupX, lookupY);
+                        }
                     }
                 }
             } //end of time
@@ -87,6 +128,9 @@ void population::update() {
             reproduce(prey_gametes, prey_pop, prey_pop_count);
         } //used to scope and free prey gametes after usage
 
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> timeTaken = end - start;
+        std::cout << timeTaken.count()/1000.0 << " Seconds Taken For generation\n";
     } //end of generations
 
 }

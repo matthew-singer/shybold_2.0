@@ -68,5 +68,6 @@ const std::string windowName = "AhYis";
         return mutator(mutate);
     }
 
-
+    const int breakupX = 10;
+    const int breakupY = 10;
 #endif
