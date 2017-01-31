@@ -25,7 +25,7 @@ void agent::updatePrey() {
     move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2]);
 }
 
-void agent::updatePred() {
+void agent::updatePred(int time) {
     std::vector<double> inputs;
     if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
         saw_last = true;
@@ -42,7 +42,10 @@ void agent::updatePred() {
     n->update(g, inputs);
     //move based on ouptputs
     //move_x_y(n->output_values[0] * pred_capture,  n->output_values[1] * pred_capture);
+    consume(time);
     move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2]);
+    consume(time);
+
 }
 
 //Need to change to get sorted vector of agents inputs
@@ -82,7 +85,7 @@ void agent::getNearestAgentPred(const std::shared_ptr<agent> &a) {
 
 //figure out what you want to do here
 void agent::consume(int time) {
-    if (input_agent.size() != 0 && input_agent[0]) {
+    if (input_agent[0]) {
         if (this->distance(input_agent[0]) < pred_capture) {
             input_agent[0]->alive = false;
             input_agent[0]->lastTime = time;

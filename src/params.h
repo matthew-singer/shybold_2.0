@@ -22,7 +22,7 @@ const std::string windowName = "AhYis";
     //const int geneNN = 16;
     const int geneCount = geneNN + input;
     
-    const double area = 5000;
+    const double area = 10000;
 
     const int generations = 1000;
     const int timeTicks = 1000;
