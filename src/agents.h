@@ -22,7 +22,7 @@ public:
     //can be moved to points.h again
     double x, y;
     double angle_facing, diff_angle;
-    
+     
     bool saw_last;
 
     void setPoints(double x_, double y_) { x = x_; y = y_; }
@@ -62,9 +62,23 @@ public:
         return false;
     }
 
+
+    bool valid_agent(double sensing_radius, const std::shared_ptr<agent> &p) {
+        if (p->alive && this->distance(p) < sensing_radius) {
+            if (!input_agent[0]) {
+                return true;
+            } else if (this->distance(p) <= this->distance(input_agent[0])) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
     unsigned long long int survivedTime;
     std::vector<std::shared_ptr<agent> > input_agent;
-
+    
     int lastTime;
 
     agent() {
@@ -97,7 +111,7 @@ public:
     void updatePred(int time); 
     void updatePrey(); 
     void move_x_y(double dx, double dy);
-    void move_mag_theta(double mag, double theta, double direction_facing);
+    void move_mag_theta(double mag, double theta, double direction_facing, double move);
 
     void consume(int time);
 
