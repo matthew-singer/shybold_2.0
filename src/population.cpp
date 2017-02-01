@@ -33,7 +33,7 @@ void draw_agent(T &screen, std::shared_ptr<agent> &a, bool isPred ) {
 
 void population::update() {
     #ifdef OPEN_CV
-    cv::Mat screen(1000, 1000, CV_8UC4, cv::Scalar(0xff, 0xff, 0xff));
+    cv::Mat screen(size, size, CV_8UC4, cv::Scalar(0xff, 0xff, 0xff));
     #endif
     std::shared_ptr<agent> pred_a;
     std::shared_ptr<agent> prey_a;
@@ -58,7 +58,7 @@ void population::update() {
                     pred_a = preds_pop[pred_i];
                     pred_a->reset();
                     //pred_a->input_agent[0] = lookup_prey->valid_agent(sensing_range_pred, pred_a);
-                    lookup_prey->valid_agent(sensing_range_pred, pred_a);
+                    lookup_prey->valid_agent(pred_a);
 
                     int lookupX = lookup_pred->getLocX(pred_a);
                     int lookupY = lookup_pred->getLocY(pred_a);
@@ -76,12 +76,12 @@ void population::update() {
                 //N loop over prey to update them 
                 for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
                     prey_a = prey_pop[prey_i];
-                    prey_a->reset();
                     if (prey_a->alive) {
+                        prey_a->reset();
                         int lookupX = lookup_prey->getLocX(prey_a);
                         int lookupY = lookup_prey->getLocY(prey_a);
                         //prey_a->input_agent[0] = lookup_pred->valid_agent(sensing_range_prey, prey_a);
-                        lookup_pred->valid_agent(sensing_range_prey, prey_a);
+                        lookup_pred->valid_agent(prey_a);
                         prey_a->updatePrey();
                         #ifdef OPEN_CV
                             draw_agent(screen, prey_a, false);

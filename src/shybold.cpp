@@ -52,10 +52,12 @@ int main(int argc, char **argv) {
 void setup_file(std::fstream &o, std::string oppFile) {
 
     o << "#" << "SisterFile " <<  oppFile << '\n';
+    o << "#" << "Width " << sizeX << '\n';
+    o << "#" << "Height " << sizeY << '\n';
     o << "#" << "InputOther " << input << '\n';
     o << "#" << "InputAgents " << input_agents << '\n';
     o << "#" << "Output " << output<< '\n';
-    o << "#" << "HiddenLayerSize" << hiddenLayerSize << '\n';
+    o << "#" << "HiddenLayerSize " << hiddenLayerSize << '\n';
     o << "#" << "HiddenLayers " << hiddenLayers << '\n';
     o << "#" << "GeneNN " << geneNN << '\n';
     o << "#" << "Generations " << generations << '\n';
