@@ -20,7 +20,7 @@ void draw_agent(T &screen, std::shared_ptr<agent> &a, bool isPred ) {
         cv::Scalar colors = isPred ? cv::Scalar(0, 0, 255) : cv::Scalar(255, 0, 0);
         if (x >= drawX && x <= drawX + size) {
             if (y >= drawY && y <= drawY + size) {
-                cv::circle(screen, cv::Point(x - drawX, y - drawY), rSize, colors, -1);
+                circle = cv::circle(screen, cv::Point(x - drawX, y - drawY), rSize, colors, -1);
                 //double radius = std::max(a->g->getRadius(), 0.0);
                 //cv::ellipse(screen, cv::Point(x - drawX, y - drawY), cv::Size(radius, radius), -1.0 * pred_a->angle_facing * RADS_TO_DEGREES -1.0 * pred_a->diff_angle * RADS_TO_DEGREES , pred_a->diff_angle * RADS_TO_DEGREES, cv::Scalar(0, 100, 0), -1, 8);
                 }
