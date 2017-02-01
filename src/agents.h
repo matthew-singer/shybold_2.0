@@ -22,7 +22,8 @@ public:
     //can be moved to points.h again
     double x, y;
     double angle_facing, diff_angle;
-     
+    std::normal_distribution<> randomWalk;
+
     bool saw_last;
 
     void setPoints(double x_, double y_) { x = x_; y = y_; }
@@ -80,7 +81,10 @@ public:
     std::vector<std::shared_ptr<agent> > input_agent;
     
     int lastTime;
-
+    void resetLocation() {
+        setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
+        alive=true;
+    }
     agent() {
         g = std::make_shared<genome>();
         n = std::make_shared<network>();
@@ -91,11 +95,12 @@ public:
         angle_facing = rates(mutate) * 2 * 3.14159; //random angle facing
         diff_angle = (0.5 * area) / (g->getRadius()*g->getRadius());
         saw_last = false;
+        randomWalk = std::normal_distribution<>(0, g->getStddev());
     };
     
     agent(std::shared_ptr<chrome> &p1, std::shared_ptr<chrome> &p2) {
-        g = std::make_shared<genome>(p1, p2);
-        n = std::make_shared<network>();
+        g = std::move(std::make_shared<genome>(p1, p2));
+        n = std::move(std::make_shared<network>());
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
         lastTime = timeTicks;
         fitness = 0;
@@ -103,6 +108,7 @@ public:
         angle_facing = rates(mutate) * 2 * 3.14159; //rand angle facing to start
         diff_angle = (0.5 * area) / (g->getRadius()*g->getRadius()); //Theta = A/R2 . It is only half the diff though (plus minus that angle)
         saw_last = false;
+        randomWalk = std::normal_distribution<>(0, g->getStddev());
     };
     
     void getNearestAgentPrey(const std::shared_ptr<agent> &a); 
@@ -118,7 +124,9 @@ public:
     int calcFitnessPred() {
         return fitness * pred_fitness;    
     }
-    
+    double getRandom() {
+        randomWalk(mutate); //mutate is just a randomness varaible - not actually anything to do with mutating
+    } 
     int calcFitnessPrey() {
         return lastTime / prey_fitness;
     }

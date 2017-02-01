@@ -10,7 +10,7 @@
 #include<opencv2/opencv.hpp>
 const std::string windowName = "AhYis";
 #endif
-    const int input  = 4; //bias node and angle facing
+    const int input  = 2; //bias node and angle facing
     const int input_agents = 1; // number of agents to input into the NN
 
 
@@ -25,17 +25,17 @@ const std::string windowName = "AhYis";
     const int generations = 1000;
     const int timeTicks = 1000;
 
-    const int replicates = 1; //number of tanks
-    const int predator_pop_count = 100;
-    const int prey_pop_count = 1000; //turn off prey nn
+    const int replicates = 1000; //number of tanks
+    const int predator_pop_count = 1;
+    const int prey_pop_count = 100; //turn off prey nn
 
     const double pred_capture = 8; 
-    const double sensing_range_pred = 1000;
+    const double sensing_range_pred = 500;
     const double sensing_range_prey = 200;
     const double base_sensing_range = 100;
 
-    const double sizeX = 2000;
-    const double sizeY = 2000;
+    const double sizeX = 1000;
+    const double sizeY = 1000;
 
     const double mut_mean = 0;
     const double mut_stddev = 1.0;
@@ -43,7 +43,7 @@ const std::string windowName = "AhYis";
 
     const double xover_rate = .5;
 
-    const double pred_fitness = .25;
+    const double pred_fitness = 2;
 
     const double prey_fitness = 250.0;
 

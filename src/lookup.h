@@ -13,8 +13,10 @@ class Lookup {
     std::array < std::array<     std::vector< std::shared_ptr<agent> >  , breakupY + 1  >, breakupX + 1  >   lookupTable;
     
     template<std::size_t SIZE>
-    Lookup( std::array<std::shared_ptr<agent>, SIZE> &lookup_agents) {
-        for (auto &a: lookup_agents) {
+    Lookup( std::array<std::shared_ptr<agent>, SIZE> &lookup_agents, int start, int size) {
+        //for (auto &a: lookup_agents) {
+        for (int i = start; i < start + size; ++i) {
+            auto a = lookup_agents[i];
             lookupTable[getLocY(a)][getLocX(a)].push_back(a);
         }
     }

@@ -80,5 +80,6 @@ void setup_file(std::fstream &o, std::string oppFile) {
     }
     o << "Metabolic" << '\t';
     o << "Radius" << '\t';
+    o << "Stddev" << '\t';
     o << "Gametes" << '\n';
 }
