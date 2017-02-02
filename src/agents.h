@@ -125,8 +125,9 @@ public:
         return fitness * pred_fitness;    
     }
     double getRandom() {
-        randomWalk(mutate); //mutate is just a randomness varaible - not actually anything to do with mutating
+        return randomWalk(mutate); //mutate is just a randomness varaible - not actually anything to do with mutating
     } 
+
     int calcFitnessPrey() {
         return lastTime / prey_fitness;
     }

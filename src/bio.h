@@ -53,7 +53,8 @@ public:
         c->radius += get_mutation(); 
         setValue(c->metabolic, this->metabolic, p2->metabolic);
         c->metabolic += get_mutation(); 
-
+        setValue(c->stddev, this->stddev, p2->stddev);
+        c->stddev += get_mutation();
         return c;
     }
 
