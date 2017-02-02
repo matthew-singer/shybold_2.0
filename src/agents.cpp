@@ -115,7 +115,7 @@ void agent::move_mag_theta(double mag, double theta, double direction_facing, do
     std::cout << "Y " << cos(theta) * mag << '\n';
     std::cout << "Theta " << theta << '\n';
     std::cout << "Mag " << mag << '\n';*/
-    theta = std::fmod(angle_facing + direction_facing, 2 * PI);
+    theta = std::fmod(theta, 2 * PI);
     if (theta < 0 ) {
         theta += 2 * PI;
     }

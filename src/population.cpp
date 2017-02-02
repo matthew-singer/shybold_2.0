@@ -20,9 +20,19 @@ void draw_agent(T &screen, std::shared_ptr<agent> &a, bool isPred ) {
         cv::Scalar colors = isPred ? cv::Scalar(0, 0, 255) : cv::Scalar(255, 0, 0);
         if (x >= drawX && x <= drawX + size) {
             if (y >= drawY && y <= drawY + size) {
-                circle = cv::circle(screen, cv::Point(x - drawX, y - drawY), rSize, colors, -1);
-                //double radius = std::max(a->g->getRadius(), 0.0);
-                //cv::ellipse(screen, cv::Point(x - drawX, y - drawY), cv::Size(radius, radius), -1.0 * pred_a->angle_facing * RADS_TO_DEGREES -1.0 * pred_a->diff_angle * RADS_TO_DEGREES , pred_a->diff_angle * RADS_TO_DEGREES, cv::Scalar(0, 100, 0), -1, 8);
+                cv::circle(screen, cv::Point(x - drawX, y - drawY), rSize, colors, -1);
+                double radius = std::max(a->g->getRadius(), 0.0);
+                cv::ellipse( screen, cv::Point( x - drawX, y - drawY ), cv::Size( radius, radius ), -1.0 * RADS_TO_DEGREES * a->angle_facing, -1.0 * a->diff_angle * RADS_TO_DEGREES, a->diff_angle * RADS_TO_DEGREES, colors, 1, 8 );
+                if (radius && a->diff_angle < PI) {
+                    double end_x = cos(-1.0 * a->angle_facing + a->diff_angle) * radius + x - drawX;
+                    double end_y = sin(-1.0 * a->angle_facing + a->diff_angle) *radius + y - drawY;
+                    cv::line(screen, cv::Point(x - drawX, y - drawY), cv::Point( end_x, end_y), colors, 1, 8);
+                    
+                    end_x = cos(-1.0 * a->angle_facing - a->diff_angle) * radius + x - drawX;
+                    end_y = sin(-1.0 * a->angle_facing - a->diff_angle) *radius + y - drawY;
+                    cv::line(screen, cv::Point(x - drawX, y - drawY), cv::Point( end_x, end_y), colors, 1, 8);
+                }
+                //cv::ellipse(screen, cv::Point(x - drawX, y - drawY), cv::Size(radius, radius), -1.0 * a->angle_facing * RADS_TO_DEGREES -1.0 * a->diff_angle * RADS_TO_DEGREES , a->diff_angle * RADS_TO_DEGREES, cv::Scalar(100, 100, 100), 1, 8);
                 }
             }
 }
