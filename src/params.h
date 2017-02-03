@@ -26,7 +26,7 @@ const std::string windowName = "AhYis";
     const int timeTicks = 1000;
 
     const int replicates = 1000; //number of tanks
-    const int predator_pop_count = 1;
+    const int predator_pop_count = 2;
     const int prey_pop_count = 100; //turn off prey nn
 
     const double pred_capture = 8; 
