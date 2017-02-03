@@ -128,7 +128,7 @@ void population::update() {
             std::vector< std::shared_ptr<chrome> > pred_gametes;
             for (int pred_i = 0; pred_i < predator_pop_count * replicates ; ++pred_i) {
                 auto pred_a = preds_pop[pred_i];
-                int val = pred_a->calcFitnessPred();
+                int val = no_fit_pred ? 2 : pred_a->calcFitnessPred();
                 for (int i = 0; i < val; ++i) {
                     pred_gametes.push_back(pred_a->getGamete());
                 }
@@ -142,7 +142,7 @@ void population::update() {
             std::vector< std::shared_ptr<chrome> > prey_gametes;
             for (int prey_i = 0; prey_i < prey_pop_count * replicates ; ++prey_i) {
                 auto prey_a = prey_pop[prey_i];
-                int val = prey_a->calcFitnessPrey();
+                int val = no_fit_prey ? 2 : prey_a->calcFitnessPrey();
                 for (int i = 0; i < val; ++i) {
                     prey_gametes.push_back(prey_a->getGamete());
                 }

@@ -10,22 +10,13 @@ void agent::updatePrey() {
     std::vector<double> inputs;
     if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
         saw_last = true;
-        //inputs = { this->distance(input_agent[0]),  atan2(input_agent[0]->y - y, input_agent[0]->x - x), 1.0 };
         inputs = { this->distance(input_agent[0]),  atan2(input_agent[0]->y - y, input_agent[0]->x - x) , double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
-        //inputs = {( 10*((input_agent[0])->x - x))/sensing_range_prey    , (10*((input_agent[0])->y - y))/sensing_range_prey, 0.0, 1.0};
     } else {
-        //make appropariate number of inputs
         saw_last = false;
         inputs = { 0.0, 0.0, double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
-        //inputs = { 0.0, 0.0, 1.0 } ;
-        //inputs = { 0.0, 0.0, double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
-        //inputs = { 0.0, 0.0, 0.0, 1.0};
     }
     //you hand it chrome 1 values and chrome 2 values from genome
     n->update(g, inputs);
-    //move based on ouptputs
-    //move_x_y(n->output_values[0] * pred_capture,  n->output_values[1] * pred_capture);
-    //move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2]);
     move_mag_theta(n->output_values[0], n->output_values[1], 0.0, pred_capture);
 }
 
@@ -49,7 +40,7 @@ void agent::updatePred(int time) {
     //move based on ouptputs
     //move_x_y(n->output_values[0] * pred_capture,  n->output_values[1] * pred_capture);
     //move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2]);
-    move_mag_theta(n->output_values[0], n->output_values[1], 0.0, pred_capture);
+    move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2], pred_capture);
     consume(time);
 
 }
@@ -115,14 +106,14 @@ void agent::move_mag_theta(double mag, double theta, double direction_facing, do
     std::cout << "Y " << cos(theta) * mag << '\n';
     std::cout << "Theta " << theta << '\n';
     std::cout << "Mag " << mag << '\n';*/
-    theta = std::fmod(theta, 2 * PI);
-    if (theta < 0 ) {
-        theta += 2 * PI;
+    direction_facing = std::fmod(direction_facing, 2 * PI);
+    if (direction_facing < 0 ) {
+        direction_facing += 2 * PI;
     }
     x = std::max(0.0, std::min(cos(theta) * mag * move + x, sizeX));
     y = std::max(0.0, std::min(sin(theta) * mag * move + y, sizeY));
     //angle_facing = std::fmod(angle_facing + direction_facing, 2 * PI);
-    angle_facing = theta;
+    angle_facing = direction_facing;
     
 }
 

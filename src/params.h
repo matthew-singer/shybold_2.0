@@ -13,8 +13,9 @@ const std::string windowName = "AhYis";
     const int input  = 4; //bias node and angle facing
     const int input_agents = 1; // number of agents to input into the NN
 
-
-    const int output = 3;
+    const bool no_fit_pred = false;
+    const bool no_fit_prey = false;
+    const int output = 4;
     const int hiddenLayerSize = 0;
     const int hiddenLayers = 0;
     
