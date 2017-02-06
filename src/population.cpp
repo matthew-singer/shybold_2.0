@@ -13,7 +13,7 @@ const int drawY = 000;
 const int size = 1000;
 
 template <class T>
-void draw_agent(T &screen, std::shared_ptr<agent> &a, bool isPred ) {
+void draw_agent(T &screen, std::shared_ptr<agent> &a, bool isPred, bool drawSector = true ) {
         int x = a->x;
         int y = sizeY - a->y;
         double rSize = isPred ? 8 : 2;
@@ -21,9 +21,10 @@ void draw_agent(T &screen, std::shared_ptr<agent> &a, bool isPred ) {
         if (x >= drawX && x <= drawX + size) {
             if (y >= drawY && y <= drawY + size) {
                 cv::circle(screen, cv::Point(x - drawX, y - drawY), rSize, colors, -1);
+                if (drawSector) {
                 double radius = std::max(a->g->getRadius(), 0.0);
                 cv::ellipse( screen, cv::Point( x - drawX, y - drawY ), cv::Size( radius, radius ), -1.0 * RADS_TO_DEGREES * a->angle_facing, -1.0 * a->diff_angle * RADS_TO_DEGREES, a->diff_angle * RADS_TO_DEGREES, colors, 1, 8 );
-                if (radius && a->diff_angle < PI) {
+                if (drawSector && radius && a->diff_angle < PI) {
                     double end_x = cos(-1.0 * a->angle_facing + a->diff_angle) * radius + x - drawX;
                     double end_y = sin(-1.0 * a->angle_facing + a->diff_angle) *radius + y - drawY;
                     cv::line(screen, cv::Point(x - drawX, y - drawY), cv::Point( end_x, end_y), colors, 1, 8);
@@ -32,7 +33,7 @@ void draw_agent(T &screen, std::shared_ptr<agent> &a, bool isPred ) {
                     end_y = sin(-1.0 * a->angle_facing - a->diff_angle) *radius + y - drawY;
                     cv::line(screen, cv::Point(x - drawX, y - drawY), cv::Point( end_x, end_y), colors, 1, 8);
                 }
-                //cv::ellipse(screen, cv::Point(x - drawX, y - drawY), cv::Size(radius, radius), -1.0 * a->angle_facing * RADS_TO_DEGREES -1.0 * a->diff_angle * RADS_TO_DEGREES , a->diff_angle * RADS_TO_DEGREES, cv::Scalar(100, 100, 100), 1, 8);
+            }
                 }
             }
 }
@@ -94,7 +95,7 @@ void population::update() {
                         lookup_pred->valid_agent(prey_a);
                         prey_a->updatePrey();
                         #ifdef OPEN_CV
-                            draw_agent(screen, prey_a, false);
+                            draw_agent(screen, prey_a, false, true);
                         #endif
                         if (lookupX != lookup_prey->getLocX(prey_a) || lookupY != lookup_prey->getLocY(prey_a)) {
                             lookup_prey->update(prey_a, lookupX, lookupY);
