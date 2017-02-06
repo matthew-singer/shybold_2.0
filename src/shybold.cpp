@@ -54,6 +54,8 @@ void setup_file(std::fstream &o, std::string oppFile) {
     o << "#" << "SisterFile " <<  oppFile << '\n';
     o << "#" << "Width " << sizeX << '\n';
     o << "#" << "Height " << sizeY << '\n';
+    o << "#" << "NoFitPred " << no_fit_pred << '\n';
+    o << "#" << "NoFitPrey " << no_fit_prey << '\n';
     o << "#" << "InputOther " << input << '\n';
     o << "#" << "InputAgents " << input_agents << '\n';
     o << "#" << "Output " << output<< '\n';
