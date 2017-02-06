@@ -3,16 +3,18 @@
 #include "population.h"
 #include <fstream>
 #include <chrono>
-
+#ifdef OPEN_CV
+#include <opencv2/opencv.hpp>
+#endif
 std::random_device(rd);
 std::mt19937 mutate = std::mt19937(rd());
 std::normal_distribution<>mutator = std::normal_distribution<>(mut_mean, mut_stddev);
 std::uniform_real_distribution<>rates = std::uniform_real_distribution<>(0, 1);
-std::uniform_real_distribution<>rander = std::uniform_real_distribution<>(-8, 8); //pred capture
 
 unsigned long milliseconds_since_epoch =
     std::chrono::system_clock::now().time_since_epoch() / 
     std::chrono::milliseconds(1);
+
 
 std::string prey_name = "prey_" + std::to_string(milliseconds_since_epoch) ;
 std::string pred_name = "pred_" + std::to_string(milliseconds_since_epoch) ;
@@ -23,6 +25,10 @@ std::fstream output_file_pred;
 void setup_file(std::fstream &o, std::string oppFile);
 
 int main(int argc, char **argv) {
+#ifdef OPEN_CV
+
+    cv::namedWindow(windowName);
+#endif
     if (argc > 1) {
         std::string ending(argv[1]);
         prey_name += "_" + ending;
@@ -46,13 +52,16 @@ int main(int argc, char **argv) {
 void setup_file(std::fstream &o, std::string oppFile) {
 
     o << "#" << "SisterFile " <<  oppFile << '\n';
+    o << "#" << "Width " << sizeX << '\n';
+    o << "#" << "Height " << sizeY << '\n';
+    o << "#" << "NoFitPred " << no_fit_pred << '\n';
+    o << "#" << "NoFitPrey " << no_fit_prey << '\n';
     o << "#" << "InputOther " << input << '\n';
     o << "#" << "InputAgents " << input_agents << '\n';
     o << "#" << "Output " << output<< '\n';
-    o << "#" << "HiddenLayerSize" << hiddenLayerSize << '\n';
+    o << "#" << "HiddenLayerSize " << hiddenLayerSize << '\n';
     o << "#" << "HiddenLayers " << hiddenLayers << '\n';
     o << "#" << "GeneNN " << geneNN << '\n';
-    o << "#" << "AllGene " << geneCount << '\n';
     o << "#" << "Generations " << generations << '\n';
     o << "#" << "TimeTicks " << timeTicks << '\n';
     o << "#" << "Replicates " << replicates << '\n';
@@ -68,8 +77,10 @@ void setup_file(std::fstream &o, std::string oppFile) {
     o << "Gen" << '\t';
     o << "Index" << '\t';
     o << "Fitness" << '\t';
-    for (int i = 0 ; i < geneCount; ++i) {
+    for (int i = 0 ; i < geneNN ; ++i) {
         o << "Gene" << i << '\t';
     }
+    o << "Metabolic" << '\t';
+    o << "Radius" << '\t';
     o << "Gametes" << '\n';
 }

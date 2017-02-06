@@ -1,83 +1,123 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
-
+#include <cmath>
 #include "agents.h"
+
+#define PI 3.14159
 
 void agent::updatePrey() {
     std::vector<double> inputs;
     if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
-        inputs = {( 10*((input_agent[0])->x - x))/sensing_range_prey    , (10*((input_agent[0])->y - y))/sensing_range_prey, 0.0, 1.0};
+        saw_last = true;
+        inputs = { g->getRadius() / std::max(0.01, this->distance(input_agent[0])),  atan2(input_agent[0]->y - y, input_agent[0]->x - x) , double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
     } else {
-        //make appropariate number of inputs
-        inputs = { 0.0, 0.0, 0.0, 1.0};
-    }
-    //you hand it chrome 1 values and chrome 2 values from genome
-    n->update(g, inputs);
-    //move based on ouptputs
-    move_x_y(n->output_values[0] * pred_capture,  n->output_values[1] * pred_capture);
-}
-
-void agent::updatePred() {
-    std::vector<double> inputs;
-    if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
-        inputs = {( 10*((input_agent[0])->x - x))/sensing_range_pred    , (10*((input_agent[0])->y - y))/sensing_range_pred, 0.0, 1.0};
-    } else {
-        //make appropariate number of inputs
-        inputs = { 0.0, 0.0, 0.0, 1.0};
-    }
-    //you hand it chrome 1 values and chrome 2 values from genome
-    n->update(g, inputs);
-    //move based on ouptputs
-    move_x_y(n->output_values[0] * pred_capture,  n->output_values[1] * pred_capture);
-}
-
-//Need to change to get sorted vector of agents inputs
-void agent::getNearestAgentPrey(const std::shared_ptr<agent> &a) {
-    if (input_agent.size() == 0) {
-        if (this->distance(a) < sensing_range_prey) {
-            input_agent.push_back(a);
+        saw_last = false;
+        inputs = { 0.0, 0.0, double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
         }
-    } else if (!input_agent[0] || this->distance(a) < this->distance(input_agent[0])) {
-        //change it here, sort the input_agents and push them appropriately on
-        if (this->distance(a) < sensing_range_prey) {
+        //you hand it chrome 1 values and chrome 2 values from genome
+        n->update(g, inputs);
+        move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2], pred_capture);
+    }
+
+    void agent::updatePred(int time) {
+        std::vector<double> inputs;
+        if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
+            saw_last = true;
+            inputs = { g->getRadius() / std::max(0.01, this->distance(input_agent[0])) ,  atan2(input_agent[0]->y - y, input_agent[0]->x - x) , double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
+            //inputs = { this->distance(input_agent[0]),  atan2(input_agent[0]->y - y, input_agent[0]->x - x), 1.0 };
+            //inputs = { atan2(input_agent[0]->y - y, input_agent[0]->x - x) , this->distance(input_agent[0]), saw_last, !saw_last, angle, 1.0 } ;
+            //inputs = {( 10*((input_agent[0])->x - x))/sensing_range_pred    , (10*((input_agent[0])->y - y))/sensing_range_pred, 0.0, 1.0};
+        } else {
+            //make appropariate number of inputs
+            saw_last = false;
+            inputs = { 0.0, 0.0, double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
+            //inputs = { 0.0, 0.0, 1.0 } ;
+            //inputs = { 0.0, 0.0, 0.0, 1.0};
+        }
+        //you hand it chrome 1 values and chrome 2 values from genome
+        n->update(g, inputs);
+        //move based on ouptputs
+        //move_x_y(n->output_values[0] * pred_capture,  n->output_values[1] * pred_capture);
+        //move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2]);
+        move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2], pred_capture);
+        consume(time);
+
+    }
+
+    //Need to change to get sorted vector of agents inputs
+    void agent::getNearestAgentPrey(const std::shared_ptr<agent> &a) {
+
+       if (a->alive && valid_agent(a)) {
+           input_agent[0] = a;
+        } 
+        /*
+        if (input_agent.size() == 0) {
+            if (this->distance(a) < sensing_range_prey ) {
+                input_agent.push_back(a);
+            }
+        } else if (!input_agent[0] || this->distance(a) < this->distance(input_agent[0])) {
+            //change it here, sort the input_agents and push them appropriately on
+            if (this->distance(a) < sensing_range_prey) {
+                input_agent[0] = a;
+            }
+        }*/
+    }
+
+    void agent::getNearestAgentPred(const std::shared_ptr<agent> &a) {
+       if (valid_agent(a)) {
             input_agent[0] = a;
+        }  
+       /*if (input_agent.size() == 0) {
+            if (this->distance(a) < sensing_range_pred) {
+                input_agent.push_back(a);
+            }
+        } else if ( !input_agent[0] || this->distance(a) < this->distance(input_agent[0]) || !input_agent[0]->alive ) {
+            //same thing here
+            if (this->distance(a) < sensing_range_pred) {
+                input_agent[0] = a;
+            }
+        }*/
+    }
+
+    //figure out what you want to do here
+    void agent::consume(int time) {
+        if (input_agent[0]) {
+            if (this->distance(input_agent[0]) < pred_capture) {
+                input_agent[0]->alive = false;
+                input_agent[0]->lastTime = time;
+                ++fitness;
+            }
+            /*if (this->distance(input_agent[0]) < pred_capture && input_agent[0]->alive) {
+                input_agent[0]->alive = false;
+                input_agent[0]->lastTime = time;
+                ++fitness;
+            }*/
         }
     }
-}
 
-void agent::getNearestAgentPred(const std::shared_ptr<agent> &a) {
-    if (input_agent.size() == 0) {
-        if (this->distance(a) < sensing_range_pred) {
-            input_agent.push_back(a);
-        }
-    } else if ( !input_agent[0] || this->distance(a) < this->distance(input_agent[0]) || !input_agent[0]->alive ) {
-        //same thing here
-        if (this->distance(a) < sensing_range_pred) {
-            input_agent[0] = a;
-        }
+    void agent::move_x_y(double dx, double dy) {
+        x = std::max(0.0, std::min(x + dx, sizeX));
+        y = std::max(0.0, std::min(y + dy, sizeY));
     }
-}
 
-//figure out what you want to do here
-void agent::consume(int time) {
-    if (input_agent.size() != 0 && input_agent[0]) {
-        if (this->distance(input_agent[0]) < pred_capture && input_agent[0]->alive) {
-            input_agent[0]->alive = false;
-            input_agent[0]->lastTime = time;
-            ++fitness;
-        }
+    void agent::move_mag_theta(double mag, double theta, double direction_facing, double move) {
+    /*std::cout << "X " << sin(theta) * mag << '\n';
+    std::cout << "Y " << cos(theta) * mag << '\n';
+    std::cout << "Theta " << theta << '\n';
+    std::cout << "Mag " << mag << '\n';*/
+    direction_facing = std::fmod(direction_facing, 2 * PI);
+    if (direction_facing < 0 ) {
+        direction_facing += 2 * PI;
     }
-}
-
-void agent::move_x_y(double dx, double dy) {
-    x = std::max(0.0, std::min(x + dx, sizeX));
-    y = std::max(0.0, std::min(y + dy, sizeY));
+    x = std::max(0.0, std::min(cos(theta) * mag * move + x, sizeX));
+    y = std::max(0.0, std::min(sin(theta) * mag * move + y, sizeY));
+    //angle_facing = std::fmod(angle_facing + direction_facing, 2 * PI);
+    angle_facing = direction_facing;
     
 }
 
 void agent::output_data(std::fstream &o, bool prey, int gen, int index) {
-
     o << gen << '\t';
     o << index << '\t';
     if (prey) {

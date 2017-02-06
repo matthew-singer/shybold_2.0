@@ -6,6 +6,9 @@
 #include "params.h"
 #include "network.h"
 
+
+#define PI 3.14159
+
 class agent  {
 public:
 
@@ -18,16 +21,64 @@ public:
 
     //can be moved to points.h again
     double x, y;
+    double angle_facing, diff_angle;
+     
+    bool saw_last;
+
     void setPoints(double x_, double y_) { x = x_; y = y_; }
 
     double distance(const std::shared_ptr<agent> &p) {
-        
         return pow(pow(p->x - x, 2) + pow(p->y - y, 2), .5);
+    }
+    
+    bool between_agent(const std::shared_ptr<agent> &p) {
+        double tmp2 =  atan2(p->y - y, p->x - x);
+        if (tmp2 < 0) {
+            tmp2 += 2 * PI;
+        }
+        double phi = std::fmod(std::abs(angle_facing - tmp2), 2 * PI);
+        double diff = phi > PI ? 2 * PI - phi : phi;
+        if (diff < diff_angle) {
+            return true;
+        }
+        if (p->y - y == 0 && p->x - x == 0) { //on top of each other, auto eat
+            return true;
+        }
+        return false;
+    }
+    
+    bool valid_agent(const std::shared_ptr<agent> &p) {
+        if (p->alive && this->distance(p) < g->getRadius()) {
+            if (this->between_agent(p)) {
+               if (!input_agent[0]) {
+                  return true;
+               } else if (this->distance(p) <= this->distance(input_agent[0])) {
+                    return true;
+               } else { 
+                   return false;
+               }
+            }
+        } 
+        return false;
+    }
+
+
+    bool valid_agent(double sensing_radius, const std::shared_ptr<agent> &p) {
+        if (p->alive && this->distance(p) < sensing_radius) {
+            if (!input_agent[0]) {
+                return true;
+            } else if (this->distance(p) <= this->distance(input_agent[0])) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
     unsigned long long int survivedTime;
     std::vector<std::shared_ptr<agent> > input_agent;
-
+    
     int lastTime;
 
     agent() {
@@ -37,6 +88,9 @@ public:
         lastTime = timeTicks;
         fitness = 0;
         alive = true;
+        angle_facing = rates(mutate) * 2 * 3.14159; //random angle facing
+        diff_angle = (0.5 * area) / (g->getRadius()*g->getRadius());
+        saw_last = false;
     };
     
     agent(std::shared_ptr<chrome> &p1, std::shared_ptr<chrome> &p2) {
@@ -46,15 +100,18 @@ public:
         lastTime = timeTicks;
         fitness = 0;
         alive = true;
+        angle_facing = rates(mutate) * 2 * 3.14159; //rand angle facing to start
+        diff_angle = (0.5 * area) / (g->getRadius()*g->getRadius()); //Theta = A/R2 . It is only half the diff though (plus minus that angle)
+        saw_last = false;
     };
     
     void getNearestAgentPrey(const std::shared_ptr<agent> &a); 
     void getNearestAgentPred(const std::shared_ptr<agent> &a); 
 
-    void updatePred(); 
+    void updatePred(int time); 
     void updatePrey(); 
     void move_x_y(double dx, double dy);
-    void move_theta_mag(double theta, double mag);
+    void move_mag_theta(double mag, double theta, double direction_facing, double move);
 
     void consume(int time);
 
@@ -73,9 +130,10 @@ public:
         if (input_agent.size() < 1) { 
             input_agent.push_back(nullptr); 
         } else {
-            for (auto &i : input_agent) {
+            input_agent[0] = nullptr;
+            /*for (auto &i : input_agent) {
                 i = nullptr;
-            }
+            }*/
         }
     };
 };
