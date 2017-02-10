@@ -96,18 +96,18 @@ void agent::getNearestAgentPred(const std::shared_ptr<agent> &a) {
 
 //figure out what you want to do here
 void agent::consume(int time) {
-  if (input_agent[0] && !(input_agent[0]->ispred) && input_agent[0]->alive) {
+            if (input_agent[0] && !(input_agent[0]->ispred) && input_agent[0]->alive) {
         if (dist[0] <pred_capture) {
             input_agent[0]->alive = false;
             input_agent[0]->lastTime = time;
             ++fitness;
+        }
         }
         /*if (this->distance(input_agent[0]) < pred_capture && input_agent[0]->alive) {
             input_agent[0]->alive = false;
             input_agent[0]->lastTime = time;
             ++fitness;
         }*/
-    }
 }
 
 void agent::move_x_y(double dx, double dy) {

@@ -8,12 +8,13 @@
 
 
 #define PI 3.14159
-
+static int idGlobal;
 class agent  {
 public:
 
     std::shared_ptr<genome> g;
     std::shared_ptr<network> n;
+    int id;
 
     bool alive;
     bool prey;
@@ -66,23 +67,19 @@ public:
 
 
     void valid_agent(double sensing_radius,  std::shared_ptr<agent> &p) {
-      double temp_dist = this->distance(p);
-      if (p->alive && temp_dist< sensing_radius) {//eventually change to void
-        for(int i=0;i<input_agents; i++){
-	  if(dist[i]> temp_dist ){
-	    dist.insert(dist.begin()+i, temp_dist);
-	    input_agent.insert(input_agent.begin()+i,p);
-	    dist.pop_back();
-	    input_agent.pop_back();
-	    break;
+        double temp_dist = this->distance(p);
+        if (p->alive && temp_dist< sensing_radius && p->id != id) {//eventually change to void
+            for(int i=0;i<input_agents; i++){
+	            if(dist[i]> temp_dist ){
+	                dist.insert(dist.begin()+i, temp_dist);
+	                input_agent.insert(input_agent.begin()+i,p);
+                    dist.pop_back();
+                    input_agent.pop_back();
+                    break;
 
-	  }
-	    
-	  }
-
-	}  
-       
-      
+                }
+	        }
+	    }  
     }
 
     unsigned long long int survivedTime;
@@ -94,9 +91,10 @@ public:
         alive=true;
     }
     agent(bool _ispred) {
+        id = idGlobal++;
         g = std::make_shared<genome>();
         n = std::make_shared<network>();
-	 ispred=_ispred;
+	     ispred = _ispred;
       
 	
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
@@ -110,6 +108,7 @@ public:
     };
     
     agent(std::shared_ptr<chrome> &p1, std::shared_ptr<chrome> &p2, bool ispred_) {
+        id = idGlobal++;
         g = std::move(std::make_shared<genome>(p1, p2));
         n = std::move(std::make_shared<network>());
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
