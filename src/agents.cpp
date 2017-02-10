@@ -26,14 +26,36 @@ void agent::updatePrey() {
 
 void agent::updatePred(int time) {
     std::vector<double> inputs;
-    if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
-        inputs = { this->distance(input_agent[0]),  atan2(input_agent[0]->y - y, input_agent[0]->x - x), 0.0, 1.0 };
-    } else {
-        inputs = { 0, 0, getRandom(), 1.0 };
-    }
+ 
+    
+  
+        
+	for (int i=0;i<input_agents;i++){
+	  if(input_agent[i]){
+	  inputs.push_back(10.0*(input_agent[i]->x-x)/sensing_range_pred);
+	  inputs.push_back(10.0*(input_agent[i]->y-y)/sensing_range_pred);
+	  inputs.push_back(double (ispred));
+	  inputs.push_back(double (!ispred));
+	  }
+	  else{
+
+	    inputs.push_back(0.0);
+	    inputs.push_back(0.0);
+	    inputs.push_back(0.0);
+	    inputs.push_back(0.0);
+
+	    
+
+} 
+	    
+	}
+	inputs.push_back(1.0);
+  
+  
+  
     //you hand it chrome 1 values and chrome 2 values from genome
     n->update(g, inputs);
-    move_mag_theta(n->output_values[0], n->output_values[1], 0.0, pred_capture);
+    move_x_y(n->output_values[0], n->output_values[1]);
     consume(time);
 }
 
@@ -74,8 +96,8 @@ void agent::getNearestAgentPred(const std::shared_ptr<agent> &a) {
 
 //figure out what you want to do here
 void agent::consume(int time) {
-    if (input_agent[0]) {
-        if (this->distance(input_agent[0]) < pred_capture) {
+  if (input_agent[0] && !(input_agent[0]->ispred) && input_agent[0]->alive) {
+        if (dist[0] <pred_capture) {
             input_agent[0]->alive = false;
             input_agent[0]->lastTime = time;
             ++fitness;
