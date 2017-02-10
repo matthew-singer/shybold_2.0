@@ -71,12 +71,12 @@ public:
         for(int i=0;i<input_agents; i++){
 	  if(dist[i]> temp_dist ){
 	    dist.insert(dist.begin()+i, temp_dist);
-	    input_agent(input_agent.begin()+i,p);
+	    input_agent.insert(input_agent.begin()+i,p);
 	    dist.pop_back();
 	    input_agent.pop_back();
 	    break;
 
-
+	  }
 	    
 	  }
 
