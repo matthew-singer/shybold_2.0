@@ -25,13 +25,14 @@ public:
     std::normal_distribution<> randomWalk;
 
     bool saw_last;
-
+    std::vector<double>dist;
     void setPoints(double x_, double y_) { x = x_; y = y_; }
 
     double distance(const std::shared_ptr<agent> &p) {
         return pow(pow(p->x - x, 2) + pow(p->y - y, 2), .5);
     }
-    
+    bool ispred;
+
     bool between_agent(const std::shared_ptr<agent> &p) {
         double tmp2 =  atan2(p->y - y, p->x - x);
         if (tmp2 < 0) {
@@ -64,17 +65,24 @@ public:
     }
 
 
-    bool valid_agent(double sensing_radius, const std::shared_ptr<agent> &p) {
-        if (p->alive && this->distance(p) < sensing_radius) {
-            if (!input_agent[0]) {
-                return true;
-            } else if (this->distance(p) <= this->distance(input_agent[0])) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
+    void valid_agent(double sensing_radius,  std::shared_ptr<agent> &p) {
+      double temp_dist = this->distance(p);
+      if (p->alive && temp_dist< sensing_radius) {//eventually change to void
+        for(int i=0;i<input_agents; i++){
+	  if(dist[i]> temp_dist ){
+	    dist.insert(dist.begin()+i, temp_dist);
+	    input_agent(input_agent.begin()+i,p);
+	    dist.pop_back();
+	    input_agent.pop_back();
+	    break;
+
+
+	    
+	  }
+
+	}  
+       
+      
     }
 
     unsigned long long int survivedTime;
@@ -85,9 +93,12 @@ public:
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
         alive=true;
     }
-    agent() {
+    agent(bool _ispred) {
         g = std::make_shared<genome>();
         n = std::make_shared<network>();
+	 ispred=_ispred;
+      
+	
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
         lastTime = timeTicks;
         fitness = 0;
@@ -98,13 +109,14 @@ public:
         randomWalk = std::normal_distribution<>(0, g->getStddev());
     };
     
-    agent(std::shared_ptr<chrome> &p1, std::shared_ptr<chrome> &p2) {
+    agent(std::shared_ptr<chrome> &p1, std::shared_ptr<chrome> &p2, bool ispred_) {
         g = std::move(std::make_shared<genome>(p1, p2));
         n = std::move(std::make_shared<network>());
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
         lastTime = timeTicks;
         fitness = 0;
         alive = true;
+	ispred= ispred_;
         angle_facing = rates(mutate) * 2 * 3.14159; //rand angle facing to start
         diff_angle = (0.5 * area) / (g->getRadius()*g->getRadius()); //Theta = A/R2 . It is only half the diff though (plus minus that angle)
         saw_last = false;
@@ -136,12 +148,17 @@ public:
     void output_data(std::fstream &o, bool prey, int gen, int index) ;
     void reset() { 
         if (input_agent.size() < 1) { 
+	  for (int i=0; i<input_agents;i++){
             input_agent.push_back(nullptr); 
+	    dist.push_back(100000000.0);
+	  }
         } else {
-            input_agent[0] = nullptr;
-            /*for (auto &i : input_agent) {
-                i = nullptr;
-            }*/
+            
+	  for (int i=0; i<input_agents; i++) {
+		input_agent[i]=nullptr;
+		
+		dist[i]=10000000.0;
+            }
         }
     };
 };

@@ -10,15 +10,16 @@
 #include<opencv2/opencv.hpp>
 const std::string windowName = "AhYis";
 #endif
-    const int input  = 2; //bias node and angle facing
-    const int input_agents = 1; // number of agents to input into the NN
+    const int input  = 1; //bias node and angle facing
+    const int input_agents = 2; // number of agents to input into the NN
 
 
     const int output = 3;
     const int hiddenLayerSize = 0;
     const int hiddenLayers = 0;
-    
-    const int geneNN = ((input+input_agents*2)*output)*((hiddenLayerSize+1)*(hiddenLayers+1));
+     
+    const int input_genecount=4;
+    const int geneNN = ((input+input_agents*input_genecount)*output)*((hiddenLayerSize+1)*(hiddenLayers+1));
     
     const double area = 50000;
 

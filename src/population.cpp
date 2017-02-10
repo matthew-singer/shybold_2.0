@@ -43,8 +43,11 @@ void population::update() {
         std::cout << "Generation " << i << " of " << generations << '\n';
         for (int reps = 0; reps < replicates; ++reps) {
             //std::shared_ptr<Lookup> lookup_pred = std::make_shared<Lookup>(preds_pop, reps * predator_pop_count, prey_pop_count);
-            std::shared_ptr<Lookup> lookup_prey = std::make_shared<Lookup>(prey_pop, reps * prey_pop_count, prey_pop_count);
-            
+	  std::shared_ptr<Lookup> lookup = std::make_shared<Lookup>(prey_pop, reps * prey_pop_count, prey_pop_count, preds_pop, reps*predator_pop_count,predator_pop_count);
+
+	  // std::shared_ptr<Lookup> lookup_pred = std::make_shared<Lookup>(preds_pop, reps * pred_pop_count, pred_pop_count);
+
+       
             time = timeTicks;
             while (--time) {
                 #ifdef OPEN_CV
@@ -57,13 +60,20 @@ void population::update() {
                     pred_a = preds_pop[pred_i];
                     pred_a->reset();
                     //pred_a->input_agent[0] = lookup_prey->valid_agent(sensing_range_pred, pred_a);
-                    lookup_prey->valid_agent(sensing_range_pred, pred_a);
+                    lookup->valid_agent(sensing_range_pred, pred_a);
+
+		    int lookupX = lookup->getLocX(pred_a);
+		    int lookupY = lookup->getLocY(pred_a);
 
                     pred_a->updatePred(timeTicks - time);
                     //pred_a->consume(timeTicks - time);
+		    
                     #ifdef OPEN_CV
                         draw_agent(screen, pred_a, true);
                     #endif
+			if (lookupX != lookup->getLocX(pred_a) || lookupY != lookup->getLocY(pred_a)) {
+			  lookup->update(pred_a, lookupX, lookupY);
+			}
 
                 }
                 //
@@ -107,7 +117,7 @@ void population::update() {
                 }
                 pred_a->output_data(output_file_pred, false, i, pred_i);
             }
-            reproduce(pred_gametes, preds_pop, predator_pop_count);
+            reproduce(pred_gametes, preds_pop, predator_pop_count, true);
         } //used to score and free pred gametes after
         /*Prey reproduce*/
         {
@@ -137,7 +147,7 @@ void population::update() {
 }
 
 template<std::size_t SIZE>
-void population::reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std::array< std::shared_ptr<agent>, SIZE > &pop, int pop_size) {
+void population::reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std::array< std::shared_ptr<agent>, SIZE > &pop, int pop_size, bool ispred) {
     //if it is too small just totally replace it
     int gametes_select = 0;
     int gametes_size = gametes.size();
@@ -150,9 +160,9 @@ void population::reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std:
         std::shared_ptr<chrome> p2 = gametes.back();
         gametes.pop_back();*/
         if (gametes_size == 0) {
-            pop[i] = std::move(std::make_shared<agent>());
+	  pop[i] = std::move(std::make_shared<agent>(ispred));
         } else {
-            pop[i] = std::move(std::make_shared<agent>(gametes[gametes_select % gametes_size], gametes[(gametes_select + 1) % gametes_size]));
+	  pop[i] = std::move(std::make_shared<agent>(gametes[gametes_select % gametes_size], gametes[(gametes_select + 1) % gametes_size], ispred) );
             gametes_select += 2;
             if (gametes_select > gametes_select) {
                 gametes_select = 0;

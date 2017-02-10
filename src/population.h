@@ -19,15 +19,15 @@ public:
         time = timeTicks;
         gen = 0;
         for (int i = 0; i < predator_pop_count * replicates ; ++i) {
-            preds_pop[i] = std::make_shared<agent>();
+            preds_pop[i] = std::make_shared<agent>(true);
         }
         for (int i = 0; i < prey_pop_count * replicates ; ++i) {
-            prey_pop[i] = std::make_shared<agent>();
+            prey_pop[i] = std::make_shared<agent>(false);
         }
     }
     void update();
     template<std::size_t SIZE>
-    void reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std::array< std::shared_ptr<agent>, SIZE> &pop, int pop_size );
+      void reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std::array< std::shared_ptr<agent>, SIZE> &pop, int pop_size,bool ispred );
 
     void nextGen(std::vector<chrome> pred, std::vector<chrome> prey) { //do i use this funciton?
         ++gen;

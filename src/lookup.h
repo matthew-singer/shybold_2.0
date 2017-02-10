@@ -20,6 +20,21 @@ class Lookup {
             lookupTable[getLocY(a)][getLocX(a)].push_back(a);
         }
     }
+  template<std::size_t SIZE_1,std::size_t SIZE_2>
+    Lookup( std::array<std::shared_ptr<agent>, SIZE_1> &lookup_prey, int start_prey, int size_prey,  std::array<std::shared_ptr<agent>, SIZE_2> &lookup_pred, int start_pred, int size_pred) {
+      //for (auto &a: lookup_agents) {
+      for (int i = start_prey; i < start_prey + size_prey; ++i) {
+	auto a = lookup_prey[i];
+	lookupTable[getLocY(a)][getLocX(a)].push_back(a);
+      }
+    
+  for (int i = start_pred; i < start_pred + size_pred; ++i) {
+    auto a = lookup_pred[i];
+    lookupTable[getLocY(a)][getLocX(a)].push_back(a);
+  }
+}
+
+
 
     int getLocY(std::shared_ptr<agent> &a) {
         return int(a->y / (sizeY / breakupY));
@@ -45,9 +60,9 @@ class Lookup {
                 for (int y = std::max(y_search - level, 0) ; y <= std::min(y_search + level, breakupY) ; ++y) {
                     if ( (x == x_search - level || x == x_search + level || y == y_search + level || y == y_search - level)  ) {
                         for (auto &a : lookupTable[y][x]) {
-                            if (base_agent->valid_agent(sensing_radius, a)) {
-                                base_agent->input_agent[0] = a;
-                            }
+			  base_agent->valid_agent(sensing_radius, a)); 
+                              
+                            
                         }
                     }
 
