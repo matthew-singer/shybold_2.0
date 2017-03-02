@@ -33,20 +33,20 @@ const std::string windowName = "AhYis";
     const double pred_capture = 8; 
     const double sensing_range_pred = 1000;
     const double sensing_range_prey = 200;
-    const double base_sensing_range = 100;
+    const double base_sensing_range = 10;
 
     const double sizeX = 2000;
     const double sizeY = 2000;
 
     const double mut_mean = 0;
-    const double mut_stddev = 1.0;
+    const double mut_stddev = .1;
     const double mut_rate = 1/(double)geneNN;
 
     const double xover_rate = .5;
 
-    const double pred_fitness = .25;
+    const double pred_fitness = 1.0;
 
-    const double prey_fitness = 250.0;
+    const double prey_fitness = 100.0;
 
     extern std::fstream output_file_prey;
     extern std::fstream output_file_pred;

@@ -43,7 +43,7 @@ class Lookup {
                 for (int y = std::max(y_search - level, 0) ; y <= std::min(y_search + level, breakupY) ; ++y) {
                     if ( (x == x_search - level || x == x_search + level || y == y_search + level || y == y_search - level)  ) {
                         for (auto &a : lookupTable[y][x]) {
-                            if (base_agent->valid_agent(sensing_radius, a)) {
+                            if (base_agent->valid_agent(a)) {
                                 base_agent->input_agent[0] = a;
                             }
                         }
