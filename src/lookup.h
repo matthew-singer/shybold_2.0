@@ -20,11 +20,45 @@ class Lookup {
     }
 
     int getLocY(std::shared_ptr<agent> &a) {
-        return int(a->y / (sizeY / breakupY));
+        return int(a->y / (sizeY / (breakupY )) );
     }
 
     int getLocX(std::shared_ptr<agent> &a) {
-        return int(a->x / (sizeX / breakupX));
+        return int(a->x / (sizeX / (breakupX )));
+    }
+
+
+    int positive_mod(int i, int n) {
+        return (i % n + n) % n;
+    }
+
+    void valid_agent_torus(double sensing_radius,  std::shared_ptr<agent> &base_agent) {
+        bool search = true;
+        int level = 0;
+        int y_search = getLocY(base_agent);
+        int x_search = getLocX(base_agent);
+        base_agent->input_agent[0] = nullptr;
+        int searchLast = 1; //some sort of exhaustive search
+
+        while (level < breakupX && level < breakupY && searchLast) {
+            if (base_agent->input_agent[0]) {
+                searchLast = 0;
+            }
+            for (int x = x_search - level ; x <= x_search + level; ++x) {
+                for (int y = y_search - level ; y <= y_search + level ; ++y) {
+                    if ( (x == x_search - level || x == x_search + level || y == y_search + level || y == y_search - level)  ) {
+                        for (auto &a : lookupTable[ positive_mod(y, breakupX) ][ positive_mod(x, breakupY) ]) {
+                            if (base_agent->valid_agent(sensing_radius, a)) {
+                                base_agent->input_agent[0] = a;
+                            }
+                        }
+                    }
+
+                }
+            }
+            ++level;
+        }
+
     }
 
     void valid_agent(double sensing_radius,  std::shared_ptr<agent> &base_agent) {
@@ -43,7 +77,7 @@ class Lookup {
                 for (int y = std::max(y_search - level, 0) ; y <= std::min(y_search + level, breakupY) ; ++y) {
                     if ( (x == x_search - level || x == x_search + level || y == y_search + level || y == y_search - level)  ) {
                         for (auto &a : lookupTable[y][x]) {
-                            if (base_agent->valid_agent(a)) {
+                            if (base_agent->valid_agent(sensing_radius, a)) {
                                 base_agent->input_agent[0] = a;
                             }
                         }

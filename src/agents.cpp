@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cmath>
 #include "agents.h"
+#include <thread>
 
 #define PI 3.14159
 
@@ -16,13 +17,28 @@ void agent::updatePrey() {
         inputs = { 0.0, 0.0, double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
         }
         n->update(g, inputs);
-        move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2], pred_capture);
+        //move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2], pred_capture);
+       if (input_agent[0]) {
+            double is_x = std::abs(input_agent[0]->x - x) < sizeX - std::abs(input_agent[0]->x - x) ? input_agent[0]->x - x : sizeX - std::abs(input_agent[0]->x - x);
+            double is_y = std::abs(input_agent[0]->y - y) < sizeY - std::abs(input_agent[0]->y - y) ? input_agent[0]->y - y : sizeY - std::abs(input_agent[0]->y - y);
+            //double is_y = std::min(std::abs(input_agent[0]->y - y), sizeY - std::abs(input_agent[0]->y - y));
+            double thet = atan2(is_y, is_x);
+
+            //std::cout << atan2(is_y, is_x) << std::endl;
+            if (thet < 0) {
+                thet += 2 * PI;
+            }
+            std::cout << x << "\t" <<  y << std::endl;
+            move_mag_theta(-.3, thet, 0, pred_capture);
+       }
     }
 
     void agent::updatePred(int time) {
         std::vector<double> inputs;
+        
         if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
             saw_last = true;
+            
             inputs = { g->getRadius() / std::max(0.01, this->distance(input_agent[0])) ,  atan2(input_agent[0]->y - y, input_agent[0]->x - x) , double(saw_last), double(!saw_last), angle_facing, 1.0 } ;
         } else {
             //make appropariate number of inputs
@@ -31,7 +47,16 @@ void agent::updatePrey() {
         }
         //you hand it chrome 1 values and chrome 2 values from genome
         n->update(g, inputs);
-        move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2], pred_capture);
+
+       if (input_agent[0]) {
+            double is_x = std::abs(input_agent[0]->x - x) < sizeX - std::abs(input_agent[0]->x - x) ? input_agent[0]->x - x : sizeX - (input_agent[0]->x - x);
+            double is_y = std::abs(input_agent[0]->y - y) < sizeY - std::abs(input_agent[0]->y - y) ? input_agent[0]->y - y : sizeY - (input_agent[0]->y - y);
+            //double is_y = std::min(std::abs(input_agent[0]->y - y), sizeY - std::abs(input_agent[0]->y - y));
+            move_mag_theta(.3, atan2(is_y, is_x), 0, pred_capture);
+             
+       } 
+
+       // move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2], pred_capture);
         consume(time);
 
     }
@@ -101,8 +126,17 @@ void agent::updatePrey() {
     if (direction_facing < 0 ) {
         direction_facing += 2 * PI;
     }
-    x = std::max(0.0, std::min(cos(theta) * mag * move + x, sizeX));
-    y = std::max(0.0, std::min(sin(theta) * mag * move + y, sizeY));
+    //x = std::max(0.0, std::min(cos(theta) * mag * move + x, sizeX));
+    //y = std::max(0.0, std::min(sin(theta) * mag * move + y, sizeY));
+    
+    x = std::fmod(cos(theta) * mag * move + x, sizeX);
+    if (x < 0) {
+        x += sizeX; 
+    }
+    y = std::fmod(sin(theta) * mag * move + y, sizeY);
+    if (y < 0) {
+        y += sizeY ;
+    }
     //angle_facing = std::fmod(angle_facing + direction_facing, 2 * PI);
     angle_facing = direction_facing;
     

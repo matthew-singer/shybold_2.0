@@ -14,10 +14,12 @@ public:
 
     std::shared_ptr<genome> g;
     std::shared_ptr<network> n;
-
+    
     bool alive;
     bool prey;
     double fitness;
+
+    double input_x_y[2];
 
     //can be moved to points.h again
     double x, y;
@@ -28,7 +30,8 @@ public:
     void setPoints(double x_, double y_) { x = x_; y = y_; }
 
     double distance(const std::shared_ptr<agent> &p) {
-        return pow(pow(p->x - x, 2) + pow(p->y - y, 2), .5);
+        return std::sqrt(pow(std::min(std::abs(p->x - x), sizeX - std::abs(p->x - x)), 2) + pow(std::min(std::abs(p->y - y), sizeY - std::abs(p->y - y)), 2));
+       // return pow(pow(p->x - x, 2) + pow(p->y - y, 2), .5);
     }
     
     bool between_agent(const std::shared_ptr<agent> &p) {

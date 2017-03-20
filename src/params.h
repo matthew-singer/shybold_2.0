@@ -27,16 +27,16 @@ const std::string windowName = "AhYis";
     const int timeTicks = 1000;
 
     const int replicates = 1; //number of tanks
-    const int predator_pop_count = 100;
-    const int prey_pop_count = 1000; //turn off prey nn
+    const int predator_pop_count = 1;
+    const int prey_pop_count = 1; //turn off prey nn
 
     const double pred_capture = 8; 
-    const double sensing_range_pred = 1000;
+    const double sensing_range_pred = 5000;
     const double sensing_range_prey = 200;
     const double base_sensing_range = 10;
 
-    const double sizeX = 2000;
-    const double sizeY = 2000;
+    const double sizeX = 500;
+    const double sizeY = 500;
 
     const double mut_mean = 0;
     const double mut_stddev = .1;
