@@ -15,6 +15,7 @@ const std::string windowName = "AhYis";
 
     const bool no_fit_pred = false;
     const bool no_fit_prey = false;
+    const bool USE_TORUS = true;
     const int output = 4;
     const int hiddenLayerSize = 0;
     const int hiddenLayers = 0;
@@ -27,8 +28,8 @@ const std::string windowName = "AhYis";
     const int timeTicks = 1000;
 
     const int replicates = 1; //number of tanks
-    const int predator_pop_count = 1;
-    const int prey_pop_count = 1; //turn off prey nn
+    const int predator_pop_count = 3;
+    const int prey_pop_count = 30; //turn off prey nn
 
     const double pred_capture = 8; 
     const double sensing_range_pred = 5000;
@@ -46,7 +47,7 @@ const std::string windowName = "AhYis";
 
     const double pred_fitness = 1.0;
 
-    const double prey_fitness = 100.0;
+    const double prey_fitness = 499.0;
 
     extern std::fstream output_file_prey;
     extern std::fstream output_file_pred;

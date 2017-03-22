@@ -116,6 +116,7 @@ public:
     void move_x_y(double dx, double dy);
     void move_mag_theta(double mag, double theta, double direction_facing, double move);
 
+    void consume_torus(int time);
     void consume(int time);
 
     int calcFitnessPred() {

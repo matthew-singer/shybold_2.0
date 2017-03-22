@@ -69,7 +69,11 @@ void population::update() {
                     pred_a = preds_pop[pred_i];
                     pred_a->reset();
                     //pred_a->input_agent[0] = lookup_prey->valid_agent(sensing_range_pred, pred_a);
-                    lookup_prey->valid_agent(sensing_range_pred, pred_a);
+                    if (USE_TORUS) {
+                        lookup_prey->valid_agent_torus(sensing_range_pred, pred_a);
+                    } else {
+                        lookup_prey->valid_agent(sensing_range_pred, pred_a);
+                    }
 
                     int lookupX = lookup_pred->getLocX(pred_a);
                     int lookupY = lookup_pred->getLocY(pred_a);
@@ -92,7 +96,11 @@ void population::update() {
                         int lookupX = lookup_prey->getLocX(prey_a);
                         int lookupY = lookup_prey->getLocY(prey_a);
                         //prey_a->input_agent[0] = lookup_pred->valid_agent(sensing_range_prey, prey_a);
-                        lookup_pred->valid_agent(sensing_range_prey, prey_a);
+                        if (USE_TORUS) {
+                            lookup_prey->valid_agent_torus(sensing_range_prey, pred_a);
+                        } else {
+                            lookup_prey->valid_agent(sensing_range_prey, pred_a);
+                        }
                         prey_a->updatePrey();
                         #ifdef OPEN_CV
                             draw_agent(screen, prey_a, false, true);
