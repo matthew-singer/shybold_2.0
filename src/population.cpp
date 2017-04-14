@@ -55,16 +55,16 @@ void population::update() {
 
                 for (int pred_i = reps * predator_pop_count; pred_i < (predator_pop_count * (reps + 1)) ; ++pred_i) {
                     pred_a = preds_pop[pred_i];
-                    pred_a->reset();
-                    //pred_a->input_agent[0] = lookup_prey->valid_agent(sensing_range_pred, pred_a);
-                    lookup_prey->valid_agent(sensing_range_pred, pred_a);
-
-                    pred_a->updatePred(timeTicks - time);
-                    //pred_a->consume(timeTicks - time);
-                    #ifdef OPEN_CV
-                        draw_agent(screen, pred_a, true);
-                    #endif
-
+                    if (pred_a->alive) {
+                        pred_a->reset();
+                        //pred_a->input_agent[0] = lookup_prey->valid_agent(sensing_range_pred, pred_a);
+                        lookup_prey->valid_agent(sensing_range_pred, pred_a);
+                        pred_a->updatePred(timeTicks - time);
+                        //pred_a->consume(timeTicks - time);
+                        #ifdef OPEN_CV
+                            draw_agent(screen, pred_a, true);
+                        #endif
+                    }
                 }
                 //
                 //N loop over prey to update them 
@@ -109,26 +109,12 @@ void population::update() {
             }
             reproduce(pred_gametes, preds_pop, predator_pop_count);
         } //used to score and free pred gametes after
-        /*Prey reproduce*/
         {
             for (int prey_i = 0; prey_i < prey_pop_count * replicates ; ++prey_i) {
                 prey_pop[prey_i]->resetLocation();
             } 
         }
-        /*{
-            std::cout << "Prey gamete pool size = ";
-            std::vector< std::shared_ptr<chrome> > prey_gametes;
-            for (int prey_i = 0; prey_i < prey_pop_count * replicates ; ++prey_i) {
-                auto prey_a = prey_pop[prey_i];
-                int val = prey_a->calcFitnessPrey();
-                for (int i = 0; i < val; ++i) {
-                    prey_gametes.push_back(prey_a->getGamete());
-                }
-                prey_a->output_data(output_file_prey, true, i, prey_i);
-            }
-            reproduce(prey_gametes, prey_pop, prey_pop_count);
-        } //used to scope and free prey gametes after usage
-        */
+
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> timeTaken = end - start;
         std::cout << timeTaken.count()/1000.0 << " Seconds Taken For generation\n";

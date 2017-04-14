@@ -22,10 +22,15 @@ void agent::updatePrey() {
     //move_x_y(n->output_values[0] * pred_capture,  n->output_values[1] * pred_capture);
     //move_mag_theta(n->output_values[0], n->output_values[1], n->output_values[2]);
     move_mag_theta(n->output_values[0], n->output_values[1], 0.0, pred_capture);
+    
+
+
 }
 
 void agent::updatePred(int time) {
     std::vector<double> inputs;
+    double tmp_x = x;
+    double tmp_y = y;
     if (input_agent.size() != 0 && input_agent[0]) { //change this (loop througth input_agents and push_back onto inputs
         inputs = { this->distance(input_agent[0]),  atan2(input_agent[0]->y - y, input_agent[0]->x - x), 0.0, 1.0 };
     } else {
@@ -34,7 +39,20 @@ void agent::updatePred(int time) {
     //you hand it chrome 1 values and chrome 2 values from genome
     n->update(g, inputs);
     move_mag_theta(n->output_values[0], n->output_values[1], 0.0, pred_capture);
+    
+
+    double xdif = x - tmp_x;
+    double ydif = y - tmp_y;
+
+    sum_x_step += xdif;
+    sum_y_step += ydif;
+    sq_sum_x_step += xdif * xdif;
+    sq_sum_y_step += ydif * ydif;
+    
+    calc_stuff();
     consume(time);
+    chance_of_death(time);
+
 }
 
 //Need to change to get sorted vector of agents inputs
@@ -106,7 +124,7 @@ void agent::move_mag_theta(double mag, double theta, double direction_facing, do
 
 void agent::output_data(std::fstream &o, bool prey, int gen, int index) {
     o << gen << '\t';
-    o << index << '\t';
+    o << idTrue << '\t';
     if (prey) {
         o << lastTime << '\t';
     } else {
@@ -121,8 +139,15 @@ void agent::output_data(std::fstream &o, bool prey, int gen, int index) {
     o << ((g->c1)->radius + (g->c2)->radius) /2.0 << '\t';
     o << g->getStddev() << '\t'; 
     if (prey) {
-        o << calcFitnessPrey() << '\n';
+        o << calcFitnessPrey() << '\t';
     } else {
-        o << calcFitnessPred() << '\n';
+        o << calcFitnessPred() << '\t';
     }
+    o << 
+        sum_x / deathtime << "\t" << sum_y / deathtime << "\t" << 
+        sq_sum_x / deathtime - (sum_x /deathtime) * (sum_x/deathtime) << '\t' << 
+        sq_sum_y / deathtime - (sum_y /deathtime) * (sum_y/deathtime) << '\t' << 
+        sum_x_step / deathtime << "\t" << sum_y_step / deathtime << "\t" << 
+        sq_sum_x_step / deathtime - (sum_x_step /deathtime) * (sum_x_step/deathtime) << '\t' << 
+        sq_sum_y_step / deathtime - (sum_y_step /deathtime) * (sum_y_step/deathtime) << '\t' << deathtime << std::endl;
 }

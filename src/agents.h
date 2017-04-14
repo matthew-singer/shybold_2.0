@@ -8,19 +8,27 @@
 
 
 #define PI 3.14159
+static int idNum;
 
 class agent  {
 public:
 
     std::shared_ptr<genome> g;
     std::shared_ptr<network> n;
+    int idTrue;
 
     bool alive;
     bool prey;
     double fitness;
-
+    int deathtime;
     //can be moved to points.h again
     double x, y;
+    double sum_x, sum_y;
+    double sq_sum_x, sq_sum_y;
+
+    double sum_x_step, sum_y_step;
+    double sq_sum_x_step, sq_sum_y_step;
+
     double angle_facing, diff_angle;
     std::normal_distribution<> randomWalk;
 
@@ -85,7 +93,31 @@ public:
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
         alive=true;
     }
+    void chance_of_death(int time) {
+        if (x > highOfDeath) {
+            if (chanceDeath > rates(mutate)) {
+                alive = false;
+                deathtime = time;
+            }
+        }
+    }
+    void calc_stuff() {
+        sum_x += x;
+        sum_y += y;
+        sq_sum_x += (x * x);
+        sq_sum_y += (y * y);
+    }
+
     agent() {
+        idTrue = idNum++;
+        sum_x_step = 0;
+        sum_y_step = 0;
+        sq_sum_x_step = 0;
+        sq_sum_y_step = 0;
+        sum_x = 0;
+        sum_y = 0;
+        sq_sum_x = 0;
+        sq_sum_y = 0;
         g = std::make_shared<genome>();
         n = std::make_shared<network>();
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
@@ -96,9 +128,21 @@ public:
         diff_angle = (0.5 * area) / (g->getRadius()*g->getRadius());
         saw_last = false;
         randomWalk = std::normal_distribution<>(0, g->getStddev());
+        deathtime = timeTicks;
     };
     
     agent(std::shared_ptr<chrome> &p1, std::shared_ptr<chrome> &p2) {
+        idTrue = idNum++;
+        sum_x = 0;
+        sum_y = 0;
+        sq_sum_x = 0;
+        sq_sum_y = 0;
+        
+        sum_x_step = 0;
+        sum_y_step = 0;
+        sq_sum_x_step = 0;
+        sq_sum_y_step = 0;
+        
         g = std::move(std::make_shared<genome>(p1, p2));
         n = std::move(std::make_shared<network>());
         setPoints(rates(mutate) * sizeX, rates(mutate) * sizeY); //set to random
@@ -109,6 +153,7 @@ public:
         diff_angle = (0.5 * area) / (g->getRadius()*g->getRadius()); //Theta = A/R2 . It is only half the diff though (plus minus that angle)
         saw_last = false;
         randomWalk = std::normal_distribution<>(0, g->getStddev());
+        deathtime = timeTicks;
     };
     
     void getNearestAgentPrey(const std::shared_ptr<agent> &a); 
