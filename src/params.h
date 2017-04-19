@@ -68,6 +68,12 @@ const std::string windowName = "AhYis";
     const int breakupX = 10;
     const int breakupY = 10;
 
-    const double chanceDeath = 0.0001;
-    const int highOfDeath = 900;
+
+    const double i_s = 1.0;
+    const double r_s = 1.0;
+    const double c_s = 1.0;
+    const double a_s = 1.0;
+
+
 #endif
+

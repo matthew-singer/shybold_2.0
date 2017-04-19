@@ -94,11 +94,10 @@ public:
         alive=true;
     }
     void chance_of_death(int time) {
-        if (x > highOfDeath) {
-            if (chanceDeath > rates(mutate)) {
-                alive = false;
-                deathtime = time;
-            }
+        double d_m = a_s + i_s /( 1.0 + pow(2.71828, r_s) * (y - c_s));
+        if (d_m > rates(mutate)) {
+            alive = false;
+            deathtime = time;
         }
     }
     void calc_stuff() {
