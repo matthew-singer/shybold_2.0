@@ -13,7 +13,7 @@ const int drawY = 000;
 const int size = 1000;
 
 template <class T>
-void draw_agent(T &screen, std::shared_ptr<agent> &a, bool isPred, bool drawSector = true ) {
+void draw_agent(T &screen, std::shared_ptr<agent> &a, bool isPred ) {
         int x = a->x;
         int y = sizeY - a->y;
         double rSize = isPred ? 8 : 2;
@@ -21,19 +21,8 @@ void draw_agent(T &screen, std::shared_ptr<agent> &a, bool isPred, bool drawSect
         if (x >= drawX && x <= drawX + size) {
             if (y >= drawY && y <= drawY + size) {
                 cv::circle(screen, cv::Point(x - drawX, y - drawY), rSize, colors, -1);
-                if (drawSector) {
-                double radius = std::max(a->g->getRadius(), 0.0);
-                cv::ellipse( screen, cv::Point( x - drawX, y - drawY ), cv::Size( radius, radius ), -1.0 * RADS_TO_DEGREES * a->angle_facing, -1.0 * a->diff_angle * RADS_TO_DEGREES, a->diff_angle * RADS_TO_DEGREES, colors, 1, 8 );
-                if (drawSector && radius && a->diff_angle < PI) {
-                    double end_x = cos(-1.0 * a->angle_facing + a->diff_angle) * radius + x - drawX;
-                    double end_y = sin(-1.0 * a->angle_facing + a->diff_angle) *radius + y - drawY;
-                    cv::line(screen, cv::Point(x - drawX, y - drawY), cv::Point( end_x, end_y), colors, 1, 8);
-                    
-                    end_x = cos(-1.0 * a->angle_facing - a->diff_angle) * radius + x - drawX;
-                    end_y = sin(-1.0 * a->angle_facing - a->diff_angle) *radius + y - drawY;
-                    cv::line(screen, cv::Point(x - drawX, y - drawY), cv::Point( end_x, end_y), colors, 1, 8);
-                }
-            }
+                //double radius = std::max(a->g->getRadius(), 0.0);
+                //cv::ellipse(screen, cv::Point(x - drawX, y - drawY), cv::Size(radius, radius), -1.0 * pred_a->angle_facing * RADS_TO_DEGREES -1.0 * pred_a->diff_angle * RADS_TO_DEGREES , pred_a->diff_angle * RADS_TO_DEGREES, cv::Scalar(0, 100, 0), -1, 8);
                 }
             }
 }
@@ -53,10 +42,9 @@ void population::update() {
         auto start = std::chrono::high_resolution_clock::now();
         std::cout << "Generation " << i << " of " << generations << '\n';
         for (int reps = 0; reps < replicates; ++reps) {
-            std::shared_ptr<Lookup> lookup_pred = std::make_shared<Lookup>(preds_pop);
-            std::shared_ptr<Lookup> lookup_prey = std::make_shared<Lookup>(prey_pop);
-            writeOut = !(gen % 100) && reps == 0;
-
+            //std::shared_ptr<Lookup> lookup_pred = std::make_shared<Lookup>(preds_pop, reps * predator_pop_count, prey_pop_count);
+            std::shared_ptr<Lookup> lookup_prey = std::make_shared<Lookup>(prey_pop, reps * prey_pop_count, prey_pop_count);
+            
             time = timeTicks;
             while (--time) {
                 #ifdef OPEN_CV
@@ -67,43 +55,27 @@ void population::update() {
 
                 for (int pred_i = reps * predator_pop_count; pred_i < (predator_pop_count * (reps + 1)) ; ++pred_i) {
                     pred_a = preds_pop[pred_i];
-                    pred_a->reset();
-                    //pred_a->input_agent[0] = lookup_prey->valid_agent(sensing_range_pred, pred_a);
-                    lookup_prey->valid_agent(pred_a);
-
-                    int lookupX = lookup_pred->getLocX(pred_a);
-                    int lookupY = lookup_pred->getLocY(pred_a);
-                    pred_a->updatePred(timeTicks - time);
-                    //pred_a->consume(timeTicks - time);
-                    #ifdef OPEN_CV
-                        draw_agent(screen, pred_a, true);
-                    #endif
-                    if (lookupX != lookup_pred->getLocX(pred_a) || lookupY != lookup_pred->getLocY(pred_a)) {
-                        lookup_pred->update(pred_a, lookupX, lookupY);
+                    if (pred_a->alive) {
+                        pred_a->reset();
+                        //pred_a->input_agent[0] = lookup_prey->valid_agent(sensing_range_pred, pred_a);
+                        lookup_prey->valid_agent(sensing_range_pred, pred_a);
+                        pred_a->updatePred(timeTicks - time);
+                        //pred_a->consume(timeTicks - time);
+                        #ifdef OPEN_CV
+                            draw_agent(screen, pred_a, true);
+                        #endif
                     }
-
                 }
                 //
                 //N loop over prey to update them 
-                for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
-                    prey_a = prey_pop[prey_i];
-                    if (prey_a->alive) {
-                        prey_a->reset();
-                        int lookupX = lookup_prey->getLocX(prey_a);
-                        int lookupY = lookup_prey->getLocY(prey_a);
-                        //prey_a->input_agent[0] = lookup_pred->valid_agent(sensing_range_prey, prey_a);
-                        lookup_pred->valid_agent(prey_a);
-                        prey_a->updatePrey();
-                        #ifdef OPEN_CV
-                            draw_agent(screen, prey_a, false, true);
-                        #endif
-                        if (lookupX != lookup_prey->getLocX(prey_a) || lookupY != lookup_prey->getLocY(prey_a)) {
-                            lookup_prey->update(prey_a, lookupX, lookupY);
+                #ifdef OPEN_CV
+                    for (int prey_i = reps * prey_pop_count; prey_i < prey_pop_count * (reps + 1); ++prey_i) { 
+                        prey_a = prey_pop[prey_i];
+                        if (prey_a->alive) {
+                                draw_agent(screen, prey_a, false);
                         }
-
-
                     }
-                }
+                #endif
             #ifdef OPEN_CV
                 #ifdef OPENCV_SAVE
                     if (writeOut) {
@@ -121,7 +93,7 @@ void population::update() {
             #endif 
                      
             } //end of time
-
+            //std::cout << preds_pop[reps * predator_pop_count ]->calcFitnessPred() << '\n'; 
         } //end of replicates
         /*Pred reproduce*/ 
         {
@@ -129,7 +101,7 @@ void population::update() {
             std::vector< std::shared_ptr<chrome> > pred_gametes;
             for (int pred_i = 0; pred_i < predator_pop_count * replicates ; ++pred_i) {
                 auto pred_a = preds_pop[pred_i];
-                int val = no_fit_pred ? 2 : pred_a->calcFitnessPred();
+                int val = pred_a->calcFitnessPred();
                 for (int i = 0; i < val; ++i) {
                     pred_gametes.push_back(pred_a->getGamete());
                 }
@@ -137,20 +109,11 @@ void population::update() {
             }
             reproduce(pred_gametes, preds_pop, predator_pop_count);
         } //used to score and free pred gametes after
-        /*Prey reproduce*/
         {
-            std::cout << "Prey gamete pool size = ";
-            std::vector< std::shared_ptr<chrome> > prey_gametes;
             for (int prey_i = 0; prey_i < prey_pop_count * replicates ; ++prey_i) {
-                auto prey_a = prey_pop[prey_i];
-                int val = no_fit_prey ? 2 : prey_a->calcFitnessPrey();
-                for (int i = 0; i < val; ++i) {
-                    prey_gametes.push_back(prey_a->getGamete());
-                }
-                prey_a->output_data(output_file_prey, true, i, prey_i);
-            }
-            reproduce(prey_gametes, prey_pop, prey_pop_count);
-        } //used to scope and free prey gametes after usage
+                prey_pop[prey_i]->resetLocation();
+            } 
+        }
 
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> timeTaken = end - start;
@@ -177,10 +140,10 @@ void population::reproduce(std::vector< std::shared_ptr<chrome> > &gametes, std:
         } else {
             pop[i] = std::move(std::make_shared<agent>(gametes[gametes_select % gametes_size], gametes[(gametes_select + 1) % gametes_size]));
             gametes_select += 2;
-        }
-        if (gametes_select > gametes_select) {
-            gametes_select = 0;
-            std::random_shuffle(gametes.begin(), gametes.end());
+            if (gametes_select > gametes_select) {
+                gametes_select = 0;
+                std::random_shuffle(gametes.begin(), gametes.end());
+            }
         }
     }
 }

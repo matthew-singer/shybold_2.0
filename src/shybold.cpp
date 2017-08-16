@@ -54,8 +54,6 @@ void setup_file(std::fstream &o, std::string oppFile) {
     o << "#" << "SisterFile " <<  oppFile << '\n';
     o << "#" << "Width " << sizeX << '\n';
     o << "#" << "Height " << sizeY << '\n';
-    o << "#" << "NoFitPred " << no_fit_pred << '\n';
-    o << "#" << "NoFitPrey " << no_fit_prey << '\n';
     o << "#" << "InputOther " << input << '\n';
     o << "#" << "InputAgents " << input_agents << '\n';
     o << "#" << "Output " << output<< '\n';
@@ -82,5 +80,7 @@ void setup_file(std::fstream &o, std::string oppFile) {
     }
     o << "Metabolic" << '\t';
     o << "Radius" << '\t';
-    o << "Gametes" << '\n';
+    o << "Stddev" << '\t';
+    o << "Gametes" << '\t';
+    o << "Avg_X_Pos\tAvg_Y_Pos\tVar_X_Pos\tVar_Y_Pos\tAvg_X_Move\tAvg_Y_Move\tVar_X_Move\tVar_Y_Move\tAvg_Speed\tVar_Speed\tDeath\tFood\tPredation\n";
 }

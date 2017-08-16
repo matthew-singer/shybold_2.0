@@ -11,6 +11,7 @@ class chrome {
 public:
     double metabolic;
     double radius;
+    double stddev;
     //other genes here
     int id;
 
@@ -21,6 +22,7 @@ public:
         }
         radius = (base->radius) + get_mutation();
         metabolic = (base->metabolic) +  get_mutation();
+        stddev = (base->stddev) +  get_mutation();
     }	
 
     chrome() {
@@ -29,6 +31,7 @@ public:
         }
         radius = normal_dist();
         metabolic = normal_dist();
+        stddev = normal_dist();
     } 
 
     template<class T>
@@ -50,7 +53,8 @@ public:
         c->radius += get_mutation(); 
         setValue(c->metabolic, this->metabolic, p2->metabolic);
         c->metabolic += get_mutation(); 
-
+        setValue(c->stddev, this->stddev, p2->stddev);
+        c->stddev += get_mutation();
         return c;
     }
 
@@ -79,6 +83,9 @@ public:
     double getRadius() {
         return ((c1->radius) + (c2->radius))/2.0 * base_sensing_range;
     } 
+    double getStddev() {
+        return ((c1->stddev) + (c2->stddev))/2.0;
+    }
     double getWeight(size_t i) {
         return ((c1->values)[i] + (c2->values)[i])/2.0;
     }
